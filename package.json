@@ -1,0 +1,22 @@
+{
+  "name": "fiveinarow",
+  "version": "1.0.0",
+  "description": "five in a row",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/k24dizzle/fiveinarow.git"
+  },
+  "keywords": [
+    "five"
+  ],
+  "author": "k24dizzle",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/k24dizzle/fiveinarow/issues"
+  },
+  "homepage": "https://github.com/k24dizzle/fiveinarow#readme"
+}

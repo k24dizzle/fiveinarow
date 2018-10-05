@@ -1,2 +1,2 @@
 # fiveinarow
-spring break 2017
+a place where you can play five in a row
