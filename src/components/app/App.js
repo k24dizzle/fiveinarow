@@ -9,7 +9,7 @@ class App extends Component {
     return (
       <div className="App">
         <h1> Five in a row! </h1>
-        <Board/>
+        <Board height="25" width="25" />
       </div>
     );
   }
