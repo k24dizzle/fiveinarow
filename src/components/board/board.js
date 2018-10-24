@@ -1,34 +1,27 @@
 import React, { Component } from 'react';
+import Square from '../square/square.js';
 import './board.css';
 
 class Board extends Component {
-    generateTable() {
+    generateBoard() {
       var height = Array.from(Array(parseInt(this.props.height)),(x,i)=>i);
       var width = Array.from(Array(parseInt(this.props.width)),(x,i)=>i);
       var row = width.map((e, i) => {
-        return (<td key={i}>NBA</td>)
+        return (<Square key={i}>NBA</Square>)
       });
       return (
-        <table>
-          <tbody>
+        <div className="board">
             {
               height.map((e, i) => {
-                return (<tr key={i}>{ row }</tr>);
+                return (<div className="row" key={i}> { row }</div>);
               })
             }
-          </tbody>
-        </table>
+        </div>
       );
     }
 
     render() {
-      var table = this.generateTable();
-      return (
-        <div className="Board">
-          <h1> Board </h1>
-          { table }
-        </div>
-      );
+      return this.generateBoard();
     }
 }
 

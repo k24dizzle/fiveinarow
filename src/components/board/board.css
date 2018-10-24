@@ -1,3 +1,7 @@
 .test {
   text-align: center;
 }
+
+.board {
+  padding: 5px;
+}

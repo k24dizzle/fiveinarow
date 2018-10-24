@@ -4,12 +4,12 @@ import Board from '../board/board.js';
 
 class App extends Component {
   render() {
-  	console.log("Board");
-  	console.log(Board);
     return (
       <div className="App">
         <h1> Five in a row! </h1>
-        <Board height="25" width="25" />
+        <div className="boardContainer">
+          <Board height="15" width="15" />
+        </div>
       </div>
     );
   }
