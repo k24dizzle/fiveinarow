@@ -3,32 +3,32 @@ import Square from '../square/square.js';
 import './board.css';
 
 class Board extends Component {
-  handleClick(e) {
-    e.preventDefault();
-    console.log("Square was clicked!");
-  }
-
   renderSquare(i) {
     return (
       <Square
-        value="N"
-        handleClick={this.handleClick}
+        value={this.props.squares[i]}
+        handleClick={() => this.props.onClick(i)}
       />
     )
   }
 
   generateBoard() {
-    var height = Array.from(Array(parseInt(this.props.height)),(x,i)=>i);
-    var width = Array.from(Array(parseInt(this.props.width)),(x,i)=>i);
-    var row = width.map((e, i) => {
-      return this.renderSquare(i);
-    });
-
+    var width = parseInt(this.props.width);
+    var height = parseInt(this.props.height);
+    var heightArray = Array.from(Array(height),(x,i)=>i);
+    var widthArray = Array.from(Array(width),(x,i)=>i);
     return (
       <div className="board">
           {
-            height.map((e, i) => {
-              return (<div className="row" key={i}> { row }</div>);
+            heightArray.map((e, i) => {
+              return (
+                <div className="row" key={i}>
+                  {
+                    widthArray.map((test, index) => {
+                        return this.renderSquare(index + (i * width));
+                    })
+                  }
+                </div>);
             })
           }
       </div>

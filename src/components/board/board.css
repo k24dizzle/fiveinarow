@@ -1,7 +1,9 @@
-.test {
+.board {
+  padding: 5px;
   text-align: center;
 }
 
-.board {
-  padding: 5px;
+.row {
+  padding: 0px;
+  display: table;
 }
