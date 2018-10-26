@@ -26,34 +26,33 @@ class Game extends Component {
   }
 
   checkWin(squares) {
-    if (this.checkRows(squares) || this.checkColumns(squares) || this.checkDiagonalsDownRight(squares) || this.checkDiagonalsUpRight(squares)) {
+    if (this.checkRows(squares)
+        || this.checkColumns(squares)
+        || this.checkDiagonalsDownRight(squares)
+        || this.checkDiagonalsUpRight(squares)
+        ) {
       alert("Winner");
     }
   }
 
   checkRows(squares) {
-    // return this.checkHelper(squares, (i, j) => (i * 15 + j), (i) => (0));
-    return false;
+    return this.checkHelper(squares, (i, j) => (i * 15 + j), (i) => (0));
   }
   checkColumns(squares) {
-    // return this.checkHelper(squares, (i, j) => (j * 15 + i), (i) => (0));
-    return false;
+    return this.checkHelper(squares, (i, j) => (j * 15 + i), (i) => (0));
   }
   checkDiagonalsDownRight(squares) {
-    // var firstHalf = this.checkHelper(squares, (i, j) => (j * 15 + (j + i)), (i) => (i));
-    // var secondHalf = this.checkHelper(squares, (i, j) => ((j * 15) + 15 + j - i), (i) => (i));
-    return false;
+    var firstHalf = this.checkHelper(squares, (i, j) => (i + (j * 16)), (i) => (0));
+    var secondHalf = this.checkHelper(squares, (i, j) => ((j * 15) + 15 + j - i), (i) => (i));
+    return firstHalf || secondHalf;
   }
   checkDiagonalsUpRight(squares) {
     var copySquares = squares.slice(0);
     var newSquares = [];
     for (var i = 0; i < 15; i++) {
-      console.log(newSquares);
       newSquares = newSquares.concat(squares.slice(i*15, i*15+15).reverse());
     }
-    var firstHalf = this.checkHelper(newSquares, (i, j) => (j * 15 + (j + i)), (i) => (i));
-    // var secondHalf = this.checkHelper(newSquares, (i, j) => ((j * 15) + 15 + j - i), (i) => (i));
-    return firstHalf || false;
+    return this.checkDiagonalsDownRight(newSquares);
   }
 
   checkHelper(squares, fun, jfun) {
@@ -65,9 +64,9 @@ class Game extends Component {
     for (var i = 0; i < 15; i++) {
       for (var j = jfun(i); j < 15; j++) {
         var index = fun(i, j);
-        console.log("Diagonal: " + i + " " + index);
+        // console.log("Diagonal: " + i + " " + index);
         if (index < 15 * 15 && index >= 0 && squares[index] != null) {
-          console.log("Diagonal: " + i + " " + index);
+          // console.log("Diagonal: " + i + " " + index);
           if (squares[index] === curComboValue) {
             combo++;
           } else {
@@ -86,8 +85,6 @@ class Game extends Component {
       combo = 0;
       curComboValue = "";
     }
-    console.log(squares);
-    this.debug(squares);
     return false;
   }
 
