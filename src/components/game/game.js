@@ -30,7 +30,7 @@ class Game extends Component {
         || this.checkColumns(squares)
         || this.checkDiagonalsDownRight(squares)
         || this.checkDiagonalsUpRight(squares)
-        ) {
+      ) {
       alert("Winner");
     }
   }
