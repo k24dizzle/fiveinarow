@@ -26,22 +26,34 @@ class Game extends Component {
   }
 
   checkWin(squares) {
-    if (this.checkRows(squares) || this.checkColumns(squares) || this.checkDiagonals(squares)) {
+    if (this.checkRows(squares) || this.checkColumns(squares) || this.checkDiagonalsDownRight(squares) || this.checkDiagonalsUpRight(squares)) {
       alert("Winner");
     }
   }
 
   checkRows(squares) {
-    return this.checkHelper(squares, (i, j) => (i * 15 + j), (i) => (0));
+    // return this.checkHelper(squares, (i, j) => (i * 15 + j), (i) => (0));
+    return false;
   }
   checkColumns(squares) {
-    return this.checkHelper(squares, (i, j) => (j * 15 + i), (i) => (0));
+    // return this.checkHelper(squares, (i, j) => (j * 15 + i), (i) => (0));
+    return false;
   }
-  checkDiagonals(squares) {
-    var firstHalf = this.checkHelper(squares, (i, j) => (j * 15 + (j + i)), (i) => (i));
-    squares.reverse();
-    var secondHalf = this.checkHelper(squares, (i, j) => (j * 15 + (j + i)), (i) => (i));
-    return firstHalf || secondHalf;
+  checkDiagonalsDownRight(squares) {
+    // var firstHalf = this.checkHelper(squares, (i, j) => (j * 15 + (j + i)), (i) => (i));
+    // var secondHalf = this.checkHelper(squares, (i, j) => ((j * 15) + 15 + j - i), (i) => (i));
+    return false;
+  }
+  checkDiagonalsUpRight(squares) {
+    var copySquares = squares.slice(0);
+    var newSquares = [];
+    for (var i = 0; i < 15; i++) {
+      console.log(newSquares);
+      newSquares = newSquares.concat(squares.slice(i*15, i*15+15).reverse());
+    }
+    var firstHalf = this.checkHelper(newSquares, (i, j) => (j * 15 + (j + i)), (i) => (i));
+    // var secondHalf = this.checkHelper(newSquares, (i, j) => ((j * 15) + 15 + j - i), (i) => (i));
+    return firstHalf || false;
   }
 
   checkHelper(squares, fun, jfun) {
@@ -53,7 +65,9 @@ class Game extends Component {
     for (var i = 0; i < 15; i++) {
       for (var j = jfun(i); j < 15; j++) {
         var index = fun(i, j);
-        if (index < 15 * 15 && squares[index] != null) {
+        console.log("Diagonal: " + i + " " + index);
+        if (index < 15 * 15 && index >= 0 && squares[index] != null) {
+          console.log("Diagonal: " + i + " " + index);
           if (squares[index] === curComboValue) {
             combo++;
           } else {
@@ -63,7 +77,6 @@ class Game extends Component {
           if (combo === threshold) {
             return true;
           }
-          console.log(combo + " " + index)
         } else {
           combo = 0;
           curComboValue = "";
@@ -73,7 +86,17 @@ class Game extends Component {
       combo = 0;
       curComboValue = "";
     }
+    console.log(squares);
+    this.debug(squares);
     return false;
+  }
+
+  debug(squares) {
+    for (var i = 0; i < 225; i++) {
+      if (squares[i] != null) {
+        console.log(i + " " + squares[i]);
+      }
+    }
   }
 
   render() {
