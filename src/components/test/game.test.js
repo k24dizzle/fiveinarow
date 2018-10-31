@@ -40,7 +40,7 @@ test('Test win down right', () => {
   ----------
   ----------
   ----------`;
-  assertBoard(board, 10, 10, true);
+  assertBoard(board, 10, 10, 'O');
 });
 
 test('Test failed game down right', () => {
@@ -55,7 +55,7 @@ test('Test failed game down right', () => {
   ----------
   ----------
   ----------`;
-  assertBoard(board, 10, 10, false);
+  assertBoard(board, 10, 10, null);
 });
 
 test('Test win down left', () => {
@@ -70,7 +70,7 @@ test('Test win down left', () => {
   ----------
   ----------
   ----------`;
-  assertBoard(board, 10, 10, true);
+  assertBoard(board, 10, 10, 'X');
 });
 
 test('Test win down left', () => {
@@ -85,7 +85,7 @@ test('Test win down left', () => {
   ----X-----
   ---X------
   --X-------`;
-  assertBoard(board, 10, 10, true);
+  assertBoard(board, 10, 10, 'X');
 });
 
 test('Test close call', () => {
@@ -100,7 +100,7 @@ test('Test close call', () => {
   X---X-----
   X--X------
   O---------`;
-  assertBoard(board, 10, 10, false);
+  assertBoard(board, 10, 10, null);
 });
 
 test('Test close call', () => {
@@ -115,7 +115,7 @@ test('Test close call', () => {
   X---X-----
   X--X------
   X---------`;
-  assertBoard(board, 10, 10, true);
+  assertBoard(board, 10, 10, 'X');
 });
 
 test('Test down right', () => {
@@ -130,7 +130,7 @@ test('Test down right', () => {
   --X-------
   ---X------
   ----X-----`;
-  assertBoard(board, 10, 10, true);
+  assertBoard(board, 10, 10, 'X');
 });
 
 test('Test down right 2', () => {
@@ -145,7 +145,7 @@ test('Test down right 2', () => {
   ----------
   ----------
   ----------`;
-  assertBoard(board, 10, 10, true);
+  assertBoard(board, 10, 10, 'X');
 });
 
 test('Test close call down right diagonal', () => {
@@ -160,7 +160,7 @@ test('Test close call down right diagonal', () => {
   ---O------
   ----O-----
   -----O----`;
-  assertBoard(board, 10, 10, false);
+  assertBoard(board, 10, 10, null);
 });
 
 test('Test horizontal', () => {
@@ -175,7 +175,7 @@ test('Test horizontal', () => {
   ----------
   ----------
   ----------`;
-  assertBoard(board, 10, 10, true);
+  assertBoard(board, 10, 10, 'X');
 });
 
 test('Test horizontal down', () => {
@@ -190,7 +190,7 @@ test('Test horizontal down', () => {
   ----------
   ----------
   XXXXX-----`;
-  assertBoard(board, 10, 10, true);
+  assertBoard(board, 10, 10, 'X');
 });
 
 test('Test vertical', () => {
@@ -205,7 +205,7 @@ test('Test vertical', () => {
   ---------O
   ---------O
   ---------O`;
-  assertBoard(board, 10, 10, true);
+  assertBoard(board, 10, 10, 'O');
 });
 
 test('Test vertical 2', () => {
@@ -220,7 +220,7 @@ test('Test vertical 2', () => {
   ----------
   ----------
   ----------`;
-  assertBoard(board, 10, 10, true);
+  assertBoard(board, 10, 10, 'X');
 });
 
 test('Test vertical close call', () => {
@@ -235,7 +235,7 @@ test('Test vertical close call', () => {
   X-----O---
   X-----O---
   X-----O--X`;
-  assertBoard(board, 10, 10, false);
+  assertBoard(board, 10, 10, null);
 });
 
 test('Test blank board', () => {
@@ -250,7 +250,7 @@ test('Test blank board', () => {
   ----------
   ----------
   ----------`;
-  assertBoard(board, 10, 10, false);
+  assertBoard(board, 10, 10, null);
 });
 
 test('Test down left', () => {
@@ -265,7 +265,7 @@ test('Test down left', () => {
   ---X------
   --X-------
   -X--------`;
-  assertBoard(board, 10, 10, true);
+  assertBoard(board, 10, 10, 'X');
 });
 
 test('Test down left 2', () => {
@@ -280,7 +280,7 @@ test('Test down left 2', () => {
   ----------
   ----------
   ----------`;
-  assertBoard(board, 10, 10, true);
+  assertBoard(board, 10, 10, 'O');
 });
 
 test('Test down left close call', () => {
@@ -295,7 +295,7 @@ test('Test down left close call', () => {
   ----------
   ----------
   ----------`;
-  assertBoard(board, 10, 10, false);
+  assertBoard(board, 10, 10, null);
 });
 
 test('Test idk', () => {
@@ -310,5 +310,5 @@ test('Test idk', () => {
   --X-----X-
   ----------
   ----------`;
-  assertBoard(board, 10, 10, false);
+  assertBoard(board, 10, 10, null);
 });

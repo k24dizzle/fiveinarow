@@ -30,14 +30,20 @@ class Game extends Component {
   }
 
   checkWin(squares) {
-    if (this.checkRows(squares)
-        || this.checkColumns(squares)
-        || this.checkDiagonalsDownRight(squares)
-        || this.checkDiagonalsUpRight(squares)
-      ) {
-        return true;
+    var row = this.checkRows(squares);
+    var column = this.checkColumns(squares);
+    var diagonalDownRight = this.checkDiagonalsDownRight(squares);
+    var diagonalUpRight= this.checkDiagonalsUpRight(squares);
+    if (row) {
+      return row;
+    } else if (column) {
+      return column;
+    } else if (diagonalDownRight) {
+      return diagonalDownRight;
+    } else if (diagonalUpRight) {
+      return diagonalUpRight;
     }
-    return false;
+    return null;
   }
 
   checkRows(squares) {
@@ -79,7 +85,7 @@ class Game extends Component {
             curComboValue = squares[index];
           }
           if (combo === threshold) {
-            return true;
+            return curComboValue;
           }
         } else {
           combo = 0;
@@ -90,7 +96,7 @@ class Game extends Component {
       combo = 0;
       curComboValue = "";
     }
-    return false;
+    return null;
   }
 
   debug(squares) {
