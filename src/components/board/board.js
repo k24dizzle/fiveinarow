@@ -6,6 +6,7 @@ class Board extends Component {
   renderSquare(i) {
     return (
       <Square
+        key={i}
         value={this.props.squares[i]}
         handleClick={() => this.props.onClick(i)}
       />

@@ -4,8 +4,12 @@ import Board from '../board/board.js';
 class Game extends Component {
   constructor(props) {
     super(props);
+    this.w = parseInt(this.props.width);
+    this.h = parseInt(this.props.height);
+    this.totalArea = this.w * this.h;
+
     this.state = {
-        squares: Array(225).fill(null),
+        squares: Array(this.totalArea).fill(null),
         xIsNext: true,
         stepNumber: 0
     }
@@ -31,26 +35,27 @@ class Game extends Component {
         || this.checkDiagonalsDownRight(squares)
         || this.checkDiagonalsUpRight(squares)
       ) {
-      alert("Winner");
+        return true;
     }
+    return false;
   }
 
   checkRows(squares) {
-    return this.checkHelper(squares, (i, j) => (i * 15 + j), (i) => (0));
+    return this.checkHelper(squares, (i, j) => (i * this.h + j), (i) => (0));
   }
   checkColumns(squares) {
-    return this.checkHelper(squares, (i, j) => (j * 15 + i), (i) => (0));
+    return this.checkHelper(squares, (i, j) => (j * this.w + i), (i) => (0));
   }
   checkDiagonalsDownRight(squares) {
-    var firstHalf = this.checkHelper(squares, (i, j) => (i + (j * 16)), (i) => (0));
-    var secondHalf = this.checkHelper(squares, (i, j) => ((j * 15) + 15 + j - i), (i) => (i));
+    var firstHalf = this.checkHelper(squares, (i, j) => (i + (j * (this.w + 1))), (i) => (0));
+    var secondHalf = this.checkHelper(squares, (i, j) => ((j * this.w) + this.w + j - i), (i) => (i));
     return firstHalf || secondHalf;
   }
   checkDiagonalsUpRight(squares) {
     var copySquares = squares.slice(0);
     var newSquares = [];
-    for (var i = 0; i < 15; i++) {
-      newSquares = newSquares.concat(squares.slice(i*15, i*15+15).reverse());
+    for (var i = 0; i < this.w; i++) {
+      newSquares = newSquares.concat(squares.slice(i*this.w, i*this.w+this.w).reverse());
     }
     return this.checkDiagonalsDownRight(newSquares);
   }
@@ -61,11 +66,11 @@ class Game extends Component {
     var curComboValue = "";
     var threshold = 5; // 5 in a row to win
     // Go every diagonal, every row, every column
-    for (var i = 0; i < 15; i++) {
-      for (var j = jfun(i); j < 15; j++) {
+    for (var i = 0; i < this.h; i++) {
+      for (var j = jfun(i); j < this.w; j++) {
         var index = fun(i, j);
         // console.log("Diagonal: " + i + " " + index);
-        if (index < 15 * 15 && index >= 0 && squares[index] != null) {
+        if (index < this.totalArea && index >= 0 && squares[index] != null) {
           // console.log("Diagonal: " + i + " " + index);
           if (squares[index] === curComboValue) {
             combo++;
@@ -89,7 +94,7 @@ class Game extends Component {
   }
 
   debug(squares) {
-    for (var i = 0; i < 225; i++) {
+    for (var i = 0; i < this.totalArea; i++) {
       if (squares[i] != null) {
         console.log(i + " " + squares[i]);
       }
@@ -99,7 +104,7 @@ class Game extends Component {
   render() {
     return <Board
               squares={this.state.squares}
-              height="15" width="15"
+              height={this.h} width={this.w}
               onClick={i => this.handleClick(i)}
             />;
   }
