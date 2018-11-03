@@ -1,6 +1,9 @@
 import React, { Component } from 'react';
 import Board from '../board/board.js';
 
+// TODO: Move history, a list of the previous moves?
+// TODO: Statistics
+
 class Game extends Component {
   constructor(props) {
     super(props);
@@ -12,8 +15,20 @@ class Game extends Component {
         squares: Array(this.totalArea).fill(null),
         xIsNext: true,
         stepNumber: 0,
-        winner: null
+        winner: null,
+        highlight: []
     }
+  }
+
+  resetGame() {
+    // Reset the state of the game
+    this.setState({
+      squares: Array(this.totalArea).fill(null),
+      xIsNext: true,
+      stepNumber: 0,
+      winner: null,
+      highlight: []
+    })
   }
 
   handleClick(i) {
@@ -27,12 +42,15 @@ class Game extends Component {
         xIsNext: !this.state.xIsNext,
         stepNumber: this.state.stepNumber + 1
       })
-      console.log("[Game] handleClick " + i);
-      var win = this.checkWin(nextSquares.slice(0));
-      if (win !== null) {
-        this.setState({
-          winner: win['player']
-        })
+      // console.log("[Game] handleClick " + i);
+      if (this.state.winner == null) {
+        var win = this.checkWin(nextSquares.slice(0));
+        if (win !== null) {
+          this.setState({
+            winner: win['player'],
+            highlight: win['squares']
+          })
+        }
       }
     }
   }
@@ -68,10 +86,20 @@ class Game extends Component {
   }
   checkDiagonalsUpRight(squares) {
     var newSquares = [];
+    // Flip the squares so we can use a previous function
     for (var i = 0; i < this.w; i++) {
       newSquares = newSquares.concat(squares.slice(i*this.w, i*this.w+this.w).reverse());
     }
-    return this.checkDiagonalsDownRight(newSquares);
+    var result = this.checkDiagonalsDownRight(newSquares);
+    if (result != null) {
+      // Flip the squares back, restore them back
+      for (var j = 0; j < result['squares'].length; j++) {
+        var cur = result['squares'][j];
+        var remainder = this.w - (cur % this.w) - 1;
+        result['squares'][j] = cur - (cur % this.w) + remainder;
+      }
+    }
+    return result;
   }
 
   checkHelper(squares, fun, jfun) {
@@ -92,6 +120,7 @@ class Game extends Component {
             comboSquares.push(index);
           } else {
             combo = 1;
+            comboSquares = [];
             comboSquares.push(index);
             curComboValue = squares[index];
           }
@@ -116,17 +145,19 @@ class Game extends Component {
 
   render() {
     var showWinner = "";
-    if (this.state.winner !== null) {
-      showWinner = "Winner: " + this.state.winner;
-    }
+    // if (this.state.winner !== null) {
+    //   showWinner = "Winner: " + this.state.winner;
+    // }
     return (
       <div>
             <Board
               squares={this.state.squares}
+              highlight={this.state.highlight} // Highlighted squares on a win
               height={this.h} width={this.w}
               onClick={i => this.handleClick(i)}
             />
-            <span> {showWinner} </span>
+            <button onClick={() => this.resetGame()}> Restart Game </button>
+            <div> {showWinner} </div>
       </div>);
   }
 }

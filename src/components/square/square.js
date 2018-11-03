@@ -3,8 +3,11 @@ import './square.css';
 
 class Square extends Component {
     render() {
+      // console.log(this.props);
       return (
-        <button className="square" onClick={this.props.handleClick}>
+        <button
+          className={"square" + (this.props.highlight ? " highlight" : "")}
+          onClick={this.props.handleClick}>
           {this.props.value}
         </button>
       );

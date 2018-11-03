@@ -4,11 +4,13 @@ import './board.css';
 
 class Board extends Component {
   renderSquare(i) {
+    var highlight = this.props.highlight.includes(i);
     return (
       <Square
         key={i}
         value={this.props.squares[i]}
         handleClick={() => this.props.onClick(i)}
+        highlight={highlight}
       />
     )
   }
