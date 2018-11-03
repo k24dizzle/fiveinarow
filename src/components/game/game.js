@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import Board from '../board/board.js';
+import PrototypeBot from '../../bots/prototype.js';
 
 // TODO: Move history, a list of the previous moves?
 // TODO: Statistics
@@ -10,7 +11,7 @@ class Game extends Component {
     this.w = parseInt(this.props.width);
     this.h = parseInt(this.props.height);
     this.totalArea = this.w * this.h;
-
+    var bot = new PrototypeBot();
     this.state = {
         squares: Array(this.totalArea).fill(null),
         xIsNext: true,
@@ -28,7 +29,7 @@ class Game extends Component {
       stepNumber: 0,
       winner: null,
       highlight: []
-    })
+    });
   }
 
   handleClick(i) {
