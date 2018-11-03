@@ -114,14 +114,6 @@ class Game extends Component {
     return null;
   }
 
-  debug(squares) {
-    for (var i = 0; i < this.totalArea; i++) {
-      if (squares[i] != null) {
-        console.log(i + " " + squares[i]);
-      }
-    }
-  }
-
   render() {
     var showWinner = "";
     if (this.state.winner !== null) {
