@@ -3,6 +3,6 @@ steps:
   args: ['install']
 
 - name: "gcr.io/cloud-builders/gcloud"
-  args: ['app', 'deploy', 'app-dev.yaml']
+  args: ['app', 'deploy', 'src/app.yaml']
 
 timeout: "1600s"
