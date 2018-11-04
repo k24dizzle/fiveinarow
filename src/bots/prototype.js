@@ -30,20 +30,19 @@ class PrototypeBot {
   }
 
   checkWin(squares, player) {
-    console.log('checkWin');
     var row = this.checkRows(squares, player);
-    console.log("row " + row);
+    // console.log("row " + row);
 
     var column = this.checkColumns(squares, player);
-    console.log("column " + column);
+    // console.log("column " + column);
 
     var diagonalDownRight = this.checkDiagonalsDownRight(squares, player);
-    console.log("diagonalDownRight " + diagonalDownRight);
+    // console.log("diagonalDownRight " + diagonalDownRight);
 
     var diagonalUpRight= this.checkDiagonalsUpRight(squares, player);
-    console.log("diagonalUpRight " + diagonalUpRight);
+    // console.log("diagonalUpRight " + diagonalUpRight);
 
-    return row + column;
+    return row + column + diagonalDownRight + diagonalUpRight;
   }
 
   checkStraightLine(squares, iMax, jMax, indexFunction) {
@@ -131,7 +130,6 @@ class PrototypeBot {
         )
       );
     }
-    console.log(result);
     for (i = 0; i < (this.w - 1); i++) {
       result += this.exploreDiagonal(i, squares,
         (index) => (
@@ -139,7 +137,7 @@ class PrototypeBot {
         )
       );
     }
-    console.log(result);
+    // console.log(result);
     return result;
   }
 
@@ -199,15 +197,31 @@ class PrototypeBot {
     return score;
   }
 
-  evaluate(squares, width, height, totalArea) {
+  evaluate(square, width, height, totalArea, move) {
     // Given the board and player, return the best move based on some stuff
     this.w = width;
     this.h = height;
     this.totalArea = totalArea;
+    var squares = square.slice(0);
 
-    console.log("[PrototypeBot] evaluate");
-    console.log(squares);
-    return this.checkWin(squares);
+    var minMoveScore = 100000000;
+    var minMove = null;
+    for (var i = 0; i < this.totalArea; i++) {
+      if (squares[i] === null) {
+        squares[i] = move;
+        var moveScore = this.checkWin(squares);
+        if (moveScore < minMoveScore) {
+          minMoveScore = moveScore;
+          minMove = i;
+        }
+        squares[i] = null;
+      }
+    }
+    return minMove;
+  }
+
+  minimax(squares, move) {
+    return null;
   }
 }
 

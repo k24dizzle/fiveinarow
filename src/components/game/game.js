@@ -33,9 +33,12 @@ class Game extends Component {
     });
   }
 
-  handleClick(i) {
+  handleClick(i, humanMove) {
     // Square was clicked!
     var move = this.state.xIsNext ? "X" : "O";
+    var nextMove = this.state.xIsNext ? "O" : "X";
+    var win = null;
+
     const nextSquares = this.state.squares.slice(0);
     if (nextSquares[i] === null) {
       nextSquares[i] = move;
@@ -44,15 +47,37 @@ class Game extends Component {
         xIsNext: !this.state.xIsNext,
         stepNumber: this.state.stepNumber + 1
       });
-      this.bot.evaluate(nextSquares, this.w, this.h, this.totalArea);
       // console.log("[Game] handleClick " + i);
       if (this.state.winner == null) {
-        var win = this.checkWin(nextSquares.slice(0));
+        win = this.checkWin(nextSquares.slice(0));
         if (win !== null) {
           this.setState({
             winner: win['player'],
             highlight: win['squares']
-          })
+          });
+          return;
+        }
+      }
+
+      // Trigger the bot...
+      if (humanMove && win === null) {
+        var botMove = this.bot.evaluate(nextSquares, this.w, this.h, this.totalArea, nextMove);
+        console.log("Bot Move: " + botMove);
+        nextSquares[botMove] = nextMove;
+        this.setState({
+          squares: nextSquares,
+          xIsNext: this.state.xIsNext,
+          stepNumber: this.state.stepNumber + 1
+        });
+        // console.log("[Game] handleClick " + i);
+        if (this.state.winner == null) {
+          var win = this.checkWin(nextSquares.slice(0));
+          if (win !== null) {
+            this.setState({
+              winner: win['player'],
+              highlight: win['squares']
+            })
+          }
         }
       }
     }
@@ -213,7 +238,7 @@ class Game extends Component {
               squares={this.state.squares}
               highlight={this.state.highlight} // Highlighted squares on a win
               height={this.h} width={this.w}
-              onClick={i => this.handleClick(i)}
+              onClick={i => this.handleClick(i, true)}
             />
             <button onClick={() => this.resetGame()}> Restart Game </button>
             <div> {showWinner} </div>
