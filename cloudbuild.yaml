@@ -1,10 +1,8 @@
-runtime: nodejs
-
 steps:
 - name: 'gcr.io/cloud-builders/npm'
   args: ['install']
 
 - name: "gcr.io/cloud-builders/gcloud"
-  args: ["app", "deploy"]
+  args: ['app', 'deploy', 'src/app.yaml']
 
 timeout: "1600s"
