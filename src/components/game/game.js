@@ -11,6 +11,7 @@ class Game extends Component {
     this.w = parseInt(this.props.width);
     this.h = parseInt(this.props.height);
     this.totalArea = this.w * this.h;
+    this.threshold = 5;
     this.bot = new PrototypeBot();
     this.state = {
         squares: Array(this.totalArea).fill(null),
@@ -59,88 +60,144 @@ class Game extends Component {
 
   checkWin(squares) {
     var row = this.checkRows(squares);
+    if (row) return row;
     var column = this.checkColumns(squares);
+    if (column) return column;
     var diagonalDownRight = this.checkDiagonalsDownRight(squares);
-    var diagonalUpRight= this.checkDiagonalsUpRight(squares);
-
-    if (row) {
-      return row;
-    } else if (column) {
-      return column;
-    } else if (diagonalDownRight) {
-      return diagonalDownRight;
-    } else if (diagonalUpRight) {
-      return diagonalUpRight;
-    }
+    if (diagonalDownRight) return diagonalDownRight;
+    var diagonalUpRight = this.checkDiagonalsUpRight(squares);
+    if (diagonalUpRight) return diagonalUpRight;
     return null;
   }
 
-  checkRows(squares) {
-    return this.checkHelper(squares, (i, j) => (i * this.h + j), (i) => (0));
-  }
-  checkColumns(squares) {
-    return this.checkHelper(squares, (i, j) => (j * this.w + i), (i) => (0));
-  }
-  checkDiagonalsDownRight(squares) {
-    var firstHalf = this.checkHelper(squares, (i, j) => (i + (j * (this.w + 1))), (i) => (0));
-    var secondHalf = this.checkHelper(squares, (i, j) => ((j * this.w) + this.w + j - i), (i) => (i));
-    return firstHalf || secondHalf;
-  }
-  checkDiagonalsUpRight(squares) {
-    var newSquares = [];
-    // Flip the squares so we can use a previous function
-    for (var i = 0; i < this.w; i++) {
-      newSquares = newSquares.concat(squares.slice(i*this.w, i*this.w+this.w).reverse());
-    }
-    var result = this.checkDiagonalsDownRight(newSquares);
-    if (result != null) {
-      // Flip the squares back, restore them back
-      for (var j = 0; j < result['squares'].length; j++) {
-        var cur = result['squares'][j];
-        var remainder = this.w - (cur % this.w) - 1;
-        result['squares'][j] = cur - (cur % this.w) + remainder;
-      }
-    }
-    return result;
-  }
-
-  checkHelper(squares, fun, jfun) {
-    // Check if the game is over
-    var combo = 0;
-    var curComboValue = "";
-    var comboSquares = [];
-    var threshold = 5; // 5 in a row to win
-    // Go every diagonal, every row, every column
-    for (var i = 0; i < this.h; i++) {
-      for (var j = jfun(i); j < this.w; j++) {
-        var index = fun(i, j);
-        // console.log("Diagonal: " + i + " " + index);
-        if (index < this.totalArea && index >= 0 && squares[index] != null) {
-          // console.log("Diagonal: " + i + " " + index);
-          if (squares[index] === curComboValue) {
+  checkStraightLine(squares, iMax, jMax, indexFunction) {
+    var combo, curComboValue, comboSquares;
+    for (var i  = 0; i < iMax; i++) {
+      // Reset!
+      combo = 0;
+      curComboValue = "";
+      comboSquares = [];
+      for (var j = 0; j < jMax; j++) {
+        var index = indexFunction(i, j);
+        var value = squares[index];
+        if (value !== null) {
+          if (value === curComboValue) {
             combo++;
             comboSquares.push(index);
           } else {
             combo = 1;
             comboSquares = [];
             comboSquares.push(index);
-            curComboValue = squares[index];
+            curComboValue = value;
           }
-          if (combo === threshold) {
+          if (combo === this.threshold) {
             return {
               'player': curComboValue,
               'squares': comboSquares
             };
           }
         } else {
+          // Reset!
           combo = 0;
-          comboSquares = [];
           curComboValue = "";
+          comboSquares = [];
         }
       }
-      // Reset!
-      combo = 0;
-      curComboValue = "";
+    }
+    return null;
+  }
+
+  checkRows(squares) {
+    return this.checkStraightLine(squares, this.h, this.w, (i, j) => (
+      (i * this.h) + j
+    ));
+  }
+
+  checkColumns(squares) {
+    return this.checkStraightLine(squares, this.w, this.h, (i, j) => (
+      (j * this.w) + i
+    ));
+  }
+
+  checkDiagonalsDownRight(squares) {
+    var result = null;
+    for (var i = 0; i < this.h; i++) {
+      result = this.exploreDiagonal(i * this.w, squares, (index) => (
+        (index + this.w + 1)
+      ));
+      if (result != null) {
+        return result;
+      }
+    }
+    for (i = 1; i < this.w; i++) {
+      result = this.exploreDiagonal(i, squares, (index) => ((index + + this.w + 1)));
+      if (result != null) {
+        return result;
+      }
+    }
+    return result;
+  }
+
+  checkDiagonalsUpRight(squares) {
+    var result = null;
+    for (var i = 0; i < this.h; i++) {
+      result = this.exploreDiagonal(i * this.w + (this.w - 1), squares,
+        (index) => (
+          (index + this.w - 1)
+        )
+      );
+      if (result != null) {
+        return result;
+      }
+    }
+    for (i = 0; i < (this.w - 1); i++) {
+      result = this.exploreDiagonal(i, squares,
+        (index) => (
+          (index + this.w - 1)
+        )
+      );
+      if (result != null) {
+        return result;
+      }
+    }
+    return result;
+  }
+
+  isWithinOneOf(a, b) {
+    return a === b || a === (b - 1) || a === (b + 1);
+  }
+
+  exploreDiagonal(index, squares, indexFunction) {
+    // Given a starting index of a diagonal, explores down that path
+    var combo, curComboValue, comboSquares;
+    var prevIndexMod = index % this.w;
+    while (index < this.totalArea && this.isWithinOneOf(prevIndexMod, index % this.w)) {
+      var value = squares[index];
+      if (value !== null) {
+        if (value === curComboValue) {
+          combo++;
+          comboSquares.push(index);
+        } else {
+          combo = 1;
+          comboSquares = [];
+          comboSquares.push(index);
+          curComboValue = value;
+        }
+        if (combo === this.threshold) {
+          return {
+            'player': curComboValue,
+            'squares': comboSquares
+          };
+        }
+      } else {
+        // Reset!
+        combo = 0;
+        curComboValue = "";
+        comboSquares = [];
+      }
+      // Update the index
+      prevIndexMod = index % this.w;
+      index = indexFunction(index);
     }
     return null;
   }

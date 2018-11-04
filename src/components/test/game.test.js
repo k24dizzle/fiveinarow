@@ -25,7 +25,8 @@ function assertBoard(board, width, height, win) {
   };
   var g = new Game(props);
   var s = g.checkWin(boardArray);
-  expect(s).toBe(win);
+  var expected = s == null ? s : s['player'];
+  expect(expected).toBe(win);
 }
 
 test('Test win down right', () => {
@@ -308,6 +309,36 @@ test('Test idk', () => {
   ----X-X---
   --XX-X-X--
   --X-----X-
+  ----------
+  ----------`;
+  assertBoard(board, 10, 10, null);
+});
+
+test('Test stop diagonal overflow down right', () => {
+  var board = `
+  ----------
+  ----------
+  ----------
+  ------X---
+  -------X--
+  --------X-
+  ---------X
+  ----------
+  X---------
+  ----------`;
+  assertBoard(board, 10, 10, null);
+});
+
+test('Test stop diagonal overflow up right', () => {
+  var board = `
+  ----------
+  ----------
+  ----------
+  ----------
+  ---O------
+  --O-------
+  -O--------
+  O--------O
   ----------
   ----------`;
   assertBoard(board, 10, 10, null);
