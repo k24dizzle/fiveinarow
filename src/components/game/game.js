@@ -241,7 +241,7 @@ class Game extends Component {
               height={this.h} width={this.w}
               onClick={i => this.handleClick(i, true)}
             />
-            <button onClick={() => this.resetGame()}> Restart Game </button>
+            <button onClick={() => this.resetGame()}> Reset Game </button>
             <div> {showWinner} </div>
       </div>);
   }
