@@ -72,7 +72,7 @@ class Game extends Component {
         });
         // console.log("[Game] handleClick " + i);
         if (this.state.winner == null) {
-          var win = this.checkWin(nextSquares.slice(0));
+          win = this.checkWin(nextSquares.slice(0));
           if (win !== null) {
             this.setState({
               winner: win['player'],

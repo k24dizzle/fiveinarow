@@ -24,8 +24,8 @@ class PrototypeBot {
     }
 
     this.playerMult = {
-      'X': 1,
-      'O': -1
+      'X': -1.1, // Should try to block X more
+      'O': 1
     }
   }
 
@@ -206,22 +206,73 @@ class PrototypeBot {
 
     var minMoveScore = 100000000;
     var minMove = null;
-    for (var i = 0; i < this.totalArea; i++) {
-      if (squares[i] === null) {
-        squares[i] = move;
-        var moveScore = this.checkWin(squares);
-        if (moveScore < minMoveScore) {
-          minMoveScore = moveScore;
-          minMove = i;
-        }
-        squares[i] = null;
-      }
-    }
-    return minMove;
+    // for (var i = 0; i < this.totalArea; i++) {
+    //   if (squares[i] === null) {
+    //     squares[i] = move;
+    //     var moveScore = this.checkWin(squares);
+    //     if (moveScore < minMoveScore) {
+    //       minMoveScore = moveScore;
+    //       minMove = i;
+    //     }
+    //     squares[i] = null;
+    //   }
+    // }
+    // return minMove;
+    return this.alphabeta(squares, 2, -Infinity, Infinity, true, move, -1)['move'];
   }
 
-  minimax(squares, move) {
-    return null;
+  alphabeta(squares, depth, alpha, beta, player, move, moveIndex) {
+    if (depth === 0) {
+      return {
+        'value': this.checkWin(squares),
+        'move': moveIndex
+      };
+    }
+    if (player) {
+      var value = -99999999999;
+      var valueMove = null;
+      for (var i = 0; i < this.totalArea; i++) {
+        if (squares[i] === null) {
+          squares[i] = move;
+          var alphaBetaValue = this.alphabeta(squares, depth - 1, alpha, beta, false, 'X', i);
+          if (value < alphaBetaValue['value']) {
+            value = alphaBetaValue['value'];
+            valueMove = i;
+          }
+          alpha = Math.max(alpha, value);
+          squares[i] = null;
+        }
+        if (alpha >= beta) {
+          break;
+        }
+      }
+      return {
+        'value': value,
+        'move': valueMove
+      };
+   } else {
+      var value = 10000000000;
+      var valueMove = null;
+      for (var i = 0; i < this.totalArea; i++) {
+        if (squares[i] === null) {
+          squares[i] = move;
+          var alphaBetaValue = this.alphabeta(squares, depth - 1, alpha, beta, true, 'O', i);
+          if (value > alphaBetaValue['value']) {
+            value = alphaBetaValue['value'];
+            valueMove = i;
+          }
+          beta = Math.min(beta, value);
+          squares[i] = null;
+        }
+        if (alpha >= beta) {
+          break;
+        }
+      }
+      return {
+        'value': value,
+        'move': valueMove
+      };
+    }
   }
 }
 
