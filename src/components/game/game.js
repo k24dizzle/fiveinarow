@@ -11,7 +11,7 @@ class Game extends Component {
     this.w = parseInt(this.props.width);
     this.h = parseInt(this.props.height);
     this.totalArea = this.w * this.h;
-    var bot = new PrototypeBot();
+    this.bot = new PrototypeBot();
     this.state = {
         squares: Array(this.totalArea).fill(null),
         xIsNext: true,
@@ -42,7 +42,8 @@ class Game extends Component {
         squares: nextSquares,
         xIsNext: !this.state.xIsNext,
         stepNumber: this.state.stepNumber + 1
-      })
+      });
+      this.bot.evaluate(nextSquares, this.w, this.h, this.totalArea);
       // console.log("[Game] handleClick " + i);
       if (this.state.winner == null) {
         var win = this.checkWin(nextSquares.slice(0));
