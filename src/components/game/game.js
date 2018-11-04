@@ -4,6 +4,7 @@ import PrototypeBot from '../../bots/prototype.js';
 
 // TODO: Move history, a list of the previous moves?
 // TODO: Statistics
+// TODO: Framework for competing bots against each other
 
 class Game extends Component {
   constructor(props) {
