@@ -2,8 +2,8 @@ class PrototypeBot {
   constructor() {
     this.scores = {
       '5': {
-        'open': 100000,
-        'blocked': 100000,
+        'open': 1000000,
+        'blocked': 1000000,
       },
       '4': {
         'open': 10000,
@@ -24,7 +24,7 @@ class PrototypeBot {
     }
 
     this.playerMult = {
-      'X': -1.1, // Should try to block X more
+      'X': -1.2, // Should try to block X more
       'O': 1
     }
   }
@@ -203,9 +203,9 @@ class PrototypeBot {
     this.h = height;
     this.totalArea = totalArea;
     var squares = square.slice(0);
-
-    var minMoveScore = 100000000;
-    var minMove = null;
+    //
+    // var minMoveScore = 100000000;
+    // var minMove = null;
     // for (var i = 0; i < this.totalArea; i++) {
     //   if (squares[i] === null) {
     //     squares[i] = move;
@@ -218,7 +218,34 @@ class PrototypeBot {
     //   }
     // }
     // return minMove;
-    return this.alphabeta(squares, 2, -Infinity, Infinity, true, move, -1)['move'];
+    var t0 = performance.now();
+    var result =  this.alphabeta(squares, 2, -Infinity, Infinity, true, move, -1)['move'];
+    var t1 = performance.now();
+    console.log("Call to doSomething took " + (t1 - t0) + " milliseconds.");
+    return result;
+  }
+
+  neighbor(squares, index) {
+    // returns whether the index has another piece within 1 square of it
+    var stuff = [
+      index + 1,
+      index - 1,
+      index + this.w,
+      index - this.w,
+      index + this.w - 1,
+      index + this.w + 1,
+      index - this.w - 1,
+      index - this.w + 1,
+    ];
+    for (var i  = 0; i < stuff.length; i++) {
+      if (stuff[i] >= 0 && stuff[i] < this.totalArea &&
+        this.isWithinOneOf(index % this.w, stuff[i] % this.w)) {
+        if (squares[stuff[i]] !== null) {
+          return true;
+        }
+      }
+    }
+    return false;
   }
 
   alphabeta(squares, depth, alpha, beta, player, move, moveIndex) {
@@ -232,7 +259,7 @@ class PrototypeBot {
       var value = -99999999999;
       var valueMove = null;
       for (var i = 0; i < this.totalArea; i++) {
-        if (squares[i] === null) {
+        if (squares[i] === null && this.neighbor(squares, i)) {
           squares[i] = move;
           var alphaBetaValue = this.alphabeta(squares, depth - 1, alpha, beta, false, 'X', i);
           if (value < alphaBetaValue['value']) {
@@ -251,12 +278,12 @@ class PrototypeBot {
         'move': valueMove
       };
    } else {
-      var value = 10000000000;
-      var valueMove = null;
-      for (var i = 0; i < this.totalArea; i++) {
-        if (squares[i] === null) {
+      value = 10000000000;
+      valueMove = null;
+      for (i = 0; i < this.totalArea; i++) {
+        if (squares[i] === null && this.neighbor(squares, i)) {
           squares[i] = move;
-          var alphaBetaValue = this.alphabeta(squares, depth - 1, alpha, beta, true, 'O', i);
+          alphaBetaValue = this.alphabeta(squares, depth - 1, alpha, beta, true, 'O', i);
           if (value > alphaBetaValue['value']) {
             value = alphaBetaValue['value'];
             valueMove = i;
