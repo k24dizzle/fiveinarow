@@ -1,3 +1,5 @@
+import { checkWin } from '../utils/gameLogic.js';
+
 class PrototypeBot {
   constructor() {
     this.scores = {
@@ -23,13 +25,14 @@ class PrototypeBot {
       }
     }
 
+    // Default values, actual correct values are set when we want to evaluate
     this.playerMult = {
-      'X': -1.2, // Should try to block X more
+      'X': -1,
       'O': 1
     }
   }
 
-  checkWin(squares, player) {
+  evaluateBoard(squares, player) {
     var row = this.checkRows(squares, player);
     // console.log("row " + row);
 
@@ -202,22 +205,16 @@ class PrototypeBot {
     this.w = width;
     this.h = height;
     this.totalArea = totalArea;
+
+    if (move === "O") {
+      this.playerMult["O"] = 1.1;
+      this.playerMult["X"] = -1;
+    } else {
+      this.playerMult["O"] = -1;
+      this.playerMult["X"] = 1.1;
+    }
+
     var squares = square.slice(0);
-    //
-    // var minMoveScore = 100000000;
-    // var minMove = null;
-    // for (var i = 0; i < this.totalArea; i++) {
-    //   if (squares[i] === null) {
-    //     squares[i] = move;
-    //     var moveScore = this.checkWin(squares);
-    //     if (moveScore < minMoveScore) {
-    //       minMoveScore = moveScore;
-    //       minMove = i;
-    //     }
-    //     squares[i] = null;
-    //   }
-    // }
-    // return minMove;
     var t0 = performance.now();
     var result =  this.alphabeta(squares, 2, -Infinity, Infinity, true, move, -1)['move'];
     var t1 = performance.now();
@@ -249,9 +246,9 @@ class PrototypeBot {
   }
 
   alphabeta(squares, depth, alpha, beta, player, move, moveIndex) {
-    if (depth === 0) {
+    if (depth === 0 || checkWin(squares, 15, 15, 5) !== null) {
       return {
-        'value': this.checkWin(squares),
+        'value': this.evaluateBoard(squares),
         'move': moveIndex
       };
     }
