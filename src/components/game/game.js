@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import Board from '../board/board.js';
 import PrototypeBot from '../../bots/prototype.js';
 import { checkWin } from '../../utils/gameLogic.js';
+import './game.css';
 
 // TODO: Move history, a list of the previous moves?
 // TODO: Statistics
@@ -98,7 +99,9 @@ class Game extends Component {
               height={this.h} width={this.w}
               onClick={i => this.handleClick(i, true)}
             />
-            <button onClick={() => this.resetGame()}> Reset Game </button>
+            <button
+              onClick={() => this.resetGame()}> Reset Game
+            </button>
             <div> {showWinner} </div>
       </div>);
   }
