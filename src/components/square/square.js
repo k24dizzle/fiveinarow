@@ -3,10 +3,13 @@ import './square.css';
 
 class Square extends Component {
     render() {
-      // console.log(this.props);
+      var classNames = "square" + (this.props.highlight ? " highlight" : "");
+      if (this.props.corner) {
+        classNames += (" " + this.props.corner);
+      }
       return (
         <button
-          className={"square" + (this.props.highlight ? " highlight" : "")}
+          className={classNames}
           onClick={this.props.handleClick}>
           {this.props.value}
         </button>

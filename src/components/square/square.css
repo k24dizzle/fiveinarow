@@ -22,3 +22,20 @@
   /* Green highlight */
   background-color: #98FB98;
 }
+
+/* questionable classes for rounded corners on corner squares */
+.top-left {
+  border-radius: 3px 0px 0px 0px;
+}
+
+.top-right {
+  border-radius: 0px 3px 0px 0px;
+}
+
+.bottom-left {
+  border-radius: 0px 0px 0px 3px;
+}
+
+.bottom-right {
+  border-radius: 0px 0px 3px 0px;
+}
