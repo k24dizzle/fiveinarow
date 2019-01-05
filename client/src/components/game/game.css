@@ -1,0 +1,53 @@
+.reset {
+  background-color: #e67f7a;
+  border-bottom: 1px solid #ad6d6f;
+  border-top: 1px solid white;
+  border-left: 1px solid white;
+  border-right: 1px solid white;
+  border-radius: 3px;
+  color: #f2f2f2;
+  height: 44px;
+  font-size: 1rem;
+  cursor: pointer;
+  outline: none;
+  padding: 0 18px;
+  font-weight: 500;
+  display: flex;
+}
+
+.reset:hover {
+  background-color: #e26f69;
+}
+
+.reset:active {
+  background-color: #db8984;  /* 55% saturation of .reset background-color */
+  border-bottom: 1px solid 	#bf8d8e;
+}
+
+.bottomBar {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;  
+}
+
+.moveButton {
+  font-size: 1rem;
+  cursor: pointer;
+  outline: none;
+  padding: 3px 10px;
+  border-radius: 3px;
+}
+
+.replay {
+  margin-left: auto;
+  padding-right: 15px; /* same as the padding for the board */
+}
+
+.special {
+  visibility: hidden;
+}
+
+.hidden {
+  visibility: hidden;
+}

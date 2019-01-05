@@ -8,7 +8,7 @@ class PrototypeBot {
         'blocked': 1000000,
       },
       '4': {
-        'open': 10000,
+        'open': 100000, // as good as winning...
         'blocked': 1000
       },
       '3': {
@@ -45,7 +45,8 @@ class PrototypeBot {
     var diagonalUpRight= this.checkDiagonalsUpRight(squares, player);
     // console.log("diagonalUpRight " + diagonalUpRight);
 
-    return row + column + diagonalDownRight + diagonalUpRight;
+    var score = row + column + diagonalDownRight + diagonalUpRight;
+    return score;
   }
 
   checkStraightLine(squares, iMax, jMax, indexFunction) {
@@ -207,11 +208,11 @@ class PrototypeBot {
     this.totalArea = totalArea;
 
     if (move === "O") {
-      this.playerMult["O"] = 1.1;
+      this.playerMult["O"] = 1;
       this.playerMult["X"] = -1;
     } else {
       this.playerMult["O"] = -1;
-      this.playerMult["X"] = 1.1;
+      this.playerMult["X"] = 1;
     }
 
     var squares = square.slice(0);
