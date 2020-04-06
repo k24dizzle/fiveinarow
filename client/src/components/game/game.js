@@ -3,10 +3,13 @@ import Board from '../board/board.js';
 import PrototypeBot from '../../bots/prototype.js';
 import { checkWin } from '../../utils/gameLogic.js';
 import './game.css';
+import SocketContext from '../socket-context.js'
 
 class Game extends Component {
   constructor(props) {
     super(props);
+    console.log("GAME");
+    console.log(this.props);
     this.w = parseInt(this.props.width);
     this.h = parseInt(this.props.height);
     this.totalArea = this.w * this.h;
@@ -73,6 +76,10 @@ class Game extends Component {
   }
 
   handleClick(i, humanMove) {
+    this.props.socket.emit('handleMove', {
+      index: i,
+      humanMove: humanMove,
+    });
     // Square was clicked!
     var move = this.state.xIsNext ? this.playerOnePiece : this.playerTwoPiece;
     var nextMove = this.state.xIsNext ? this.playerTwoPiece : this.playerOnePiece;
@@ -173,4 +180,10 @@ class Game extends Component {
   }
 }
 
-export default Game;
+const GameSocket = props => (
+  <SocketContext.Consumer>
+    {socket => <Game {...props} socket={socket} />}
+  </SocketContext.Consumer>
+)
+
+export default GameSocket;
