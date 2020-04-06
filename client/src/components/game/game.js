@@ -75,6 +75,10 @@ class Game extends Component {
     }
   }
 
+  recieveClick(gameState) {
+
+  }
+
   handleClick(i, humanMove) {
     this.props.socket.emit('handleMove', {
       index: i,
