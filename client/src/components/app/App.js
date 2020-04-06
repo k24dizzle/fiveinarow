@@ -5,7 +5,7 @@ import io from "socket.io-client";
 
 class App extends Component {
   componentDidMount() {
-    var socket = io(window.location.hostname + ":80", {transports: ['websocket']});
+    var socket = io(window.location.hostname + ":443");
     socket.on('time', function(msg){
       console.log('client time: ' + msg);
     });

@@ -2,7 +2,7 @@ const express = require('express');
 var path = require('path');
 const socketIO = require('socket.io');
 
-const PORT = process.env.PORT || 80;
+const PORT = process.env.PORT || 443;
 const app = express()
 
 if (process.env.NODE_ENV === 'production') {
