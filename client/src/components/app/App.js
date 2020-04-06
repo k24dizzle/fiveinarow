@@ -1,11 +1,11 @@
 import React, { Component } from 'react';
 import './App.css';
 import Game from '../game/game.js';
-import io from "socket.io-client";
+import openSocket from "socket.io-client";
 
 class App extends Component {
   componentDidMount() {
-    const socket = io.connect(window.location.hostname + ":80");
+    const socket = openSocket(window.location.hostname + ':80');
     socket.on('time', function(msg){
       console.log('client time: ' + msg);
     });
