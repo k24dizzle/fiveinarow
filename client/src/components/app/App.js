@@ -1,11 +1,11 @@
 import React, { Component } from 'react';
 import './App.css';
 import Game from '../game/game.js';
-import openSocket from "socket.io-client";
+import io from "socket.io-client";
 
 class App extends Component {
   componentDidMount() {
-    const socket = openSocket(window.location.hostname + ':80');
+    var socket = io(window.location.hostname + ":80", {transports: ['websocket']});
     socket.on('time', function(msg){
       console.log('client time: ' + msg);
     });
