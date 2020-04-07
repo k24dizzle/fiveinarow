@@ -28,6 +28,15 @@ class Game extends Component {
     this.playerOnePiece = "X";
     this.playerTwoPiece = "O";
 
+
+  }
+
+  componentDidMount() {
+    this.props.socket.on('declareMove', function(msg){
+      console.log('client declareMove: ' + msg);
+      console.log(this);
+      this.handleClick(msg['index'], msg['humanMove']);
+    }.bind(this));
   }
 
   resetGame() {
@@ -80,10 +89,12 @@ class Game extends Component {
   }
 
   handleClick(i, humanMove) {
-    this.props.socket.emit('handleMove', {
-      index: i,
-      humanMove: humanMove,
-    });
+    if (this.state.squares[i] === null) {
+      this.props.socket.emit('handleMove', {
+        index: i,
+        humanMove: humanMove,
+      });
+    }
     // Square was clicked!
     var move = this.state.xIsNext ? this.playerOnePiece : this.playerTwoPiece;
     var nextMove = this.state.xIsNext ? this.playerTwoPiece : this.playerOnePiece;
@@ -152,15 +163,13 @@ class Game extends Component {
               onClick={i => this.handleClick(i, true)}
             />
             <div className="bottomBar">
-              <div className={"replay special"}>
-                  <button
-                    className="back moveButton"> 
-                      <i className="fas fa-chevron-left"></i>
-                  </button>
-                  <button
-                    className="forward moveButton">
-                      <i className="fas fa-chevron-right"></i>
-                  </button>
+              <div className="playerSelector">
+                <button className="moveButton"> 
+                  X
+                </button>
+                <button className="moveButton pad">
+                  O
+                </button>
               </div>
               <button
                 className="reset"

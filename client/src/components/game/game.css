@@ -44,6 +44,15 @@
   padding-right: 15px; /* same as the padding for the board */
 }
 
+.playerSelector {
+  margin-right: auto;
+  padding-left: 15px;
+}
+
+.pad {
+  margin-left: 3px;
+}
+
 .special {
   visibility: hidden;
 }

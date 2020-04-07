@@ -27,6 +27,7 @@ io.on('connection', (socket) => {
   socket.on('handleMove', function(data) {
     console.log('handleMove:');
     console.log(data);
+    io.emit('declareMove', data);
   });
   socket.on('disconnect', () => console.log('Client disconnected'));
 
