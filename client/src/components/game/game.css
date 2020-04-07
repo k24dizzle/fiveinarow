@@ -39,6 +39,15 @@
   border-radius: 3px;
 }
 
+.playerButton {
+  font-size: 1rem;
+  cursor: pointer;
+  outline: none;
+  padding: 3px 10px;
+  border-radius: 3px;
+  border-color: rgb(186, 186, 186);
+}
+
 .replay {
   margin-left: auto;
   padding-right: 15px; /* same as the padding for the board */
@@ -47,6 +56,10 @@
 .playerSelector {
   margin-right: auto;
   padding-left: 15px;
+}
+
+.active {
+  background-color:#E0E0E0;
 }
 
 .pad {

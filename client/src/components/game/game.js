@@ -22,13 +22,13 @@ class Game extends Component {
         winner: null,
         highlight: [],
         moves: [],
-        replayIndex: null
+        replayIndex: null,
+        playerX: false,
+        playerO: false,
     }
 
     this.playerOnePiece = "X";
     this.playerTwoPiece = "O";
-
-
   }
 
   componentDidMount() {
@@ -48,7 +48,9 @@ class Game extends Component {
       winner: null,
       highlight: [],
       moves: [],
-      replayIndex: null
+      replayIndex: null,
+      playerX: false,
+      playerO: false,
     });
   }
 
@@ -82,10 +84,6 @@ class Game extends Component {
         highlight: winningMoves
       });
     }
-  }
-
-  recieveClick(gameState) {
-
   }
 
   handleClick(i, humanMove) {
@@ -151,6 +149,21 @@ class Game extends Component {
     }
   }
 
+  selectPlayerX() {
+    console.log(this.state.playerX);
+    this.setState({
+      playerX: !this.state.playerX,
+      playerO: null,
+    });
+  }
+
+  selectPlayerO() {
+    this.setState({
+      playerX: null,
+      playerO: !this.state.playerO,
+    });
+  }
+
   render() {
     // For the bottomBar, used this to align the elements correctly:
     // https://stackoverflow.com/questions/38948102/center-and-right-align-flexbox-elements
@@ -164,10 +177,12 @@ class Game extends Component {
             />
             <div className="bottomBar">
               <div className="playerSelector">
-                <button className="moveButton"> 
+                <button className={(this.state.playerX) ? 'playerButton active': 'playerButton'}
+                        onClick={() => this.selectPlayerX()}> 
                   X
                 </button>
-                <button className="moveButton pad">
+                <button className={(this.state.playerO) ? 'playerButton pad active': 'playerButton pad'}
+                        onClick={() => this.selectPlayerO()}>
                   O
                 </button>
               </div>
