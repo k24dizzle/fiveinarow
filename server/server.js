@@ -21,15 +21,35 @@ const io = socketIO(server);
 
 
 let clients = {};
+let client_to_room = {};
+let room_to_clients = {};
+function generateRoom() {
+  return 'aaa';
+}
 
 io.on('connection', (socket) => {
-  console.log('Client connected');
+  console.log('client_to_room');
+  console.log(client_to_room);
+  console.log('room_to_clients');
+  console.log(room_to_clients);
+  console.log('Client connected %s', socket.id);
   socket.on('handleMove', function(data) {
     console.log('handleMove:');
     console.log(data);
     io.emit('declareMove', data);
   });
   socket.on('disconnect', () => console.log('Client disconnected'));
+
+  socket.on('createGame', function(){
+    console.log("[%s] wants to create a room", socket.id);
+  
+    var roomName = generateRoom();
+    client_to_room[socket.id] = roomName;
+    room_to_clients[roomName] = [socket.id];
+    socket.join(roomName);
+
+    socket.emit('roomCreated', roomName);
+  });
 
 });
 

@@ -37,6 +37,11 @@ class Game extends Component {
       console.log(this);
       this.handleClick(msg['index'], msg['humanMove']);
     }.bind(this));
+
+    this.props.socket.on('roomCreated', function(roomName) {
+      console.log('ROOM CREATED %s', roomName);
+      window.history.pushState('page2', 'Title', '/'+roomName);
+    });
   }
 
   resetGame() {
@@ -55,7 +60,7 @@ class Game extends Component {
   }
 
   createGame() {
-    console.log('createGame');
+    this.props.socket.emit('createGame');
   }
 
   goBack() {
@@ -116,6 +121,9 @@ class Game extends Component {
   }
 
   handleClick(i, humanMove) {
+    if (this.state.winner !== null) {
+      return;
+    }
     if (this.state.squares[i] === null) {
       this.props.socket.emit('handleMove', {
         index: i,
@@ -125,7 +133,6 @@ class Game extends Component {
     // Square was clicked!
     var move = this.state.xIsNext ? this.playerOnePiece : this.playerTwoPiece;
     var nextMove = this.state.xIsNext ? this.playerTwoPiece : this.playerOnePiece;
-    var win = null;
 
     const nextSquares = this.state.squares.slice(0);
     let nextMoves = this.state.moves.slice(0);

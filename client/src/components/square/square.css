@@ -14,6 +14,10 @@
   cursor: pointer;
 }
 
+/* .square:hover {
+  background:rgb(245, 245, 245);
+} */
+
 .square:focus {
   outline: none;
 }
@@ -21,6 +25,10 @@
 .highlight {
   /* Green highlight */
   background-color: #98FB98;
+}
+
+.highlight:hover {
+  background-color: rgb(139, 238, 139);
 }
 
 /* questionable classes for rounded corners on corner squares */
