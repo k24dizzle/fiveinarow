@@ -32,6 +32,8 @@ class Game extends Component {
   }
 
   componentDidMount() {
+    console.log("ALIBABA: ");
+    console.log(window.location.href);
     this.props.socket.on('declareMove', function(msg){
       console.log('client declareMove: ' + msg);
       console.log(this);

@@ -1,4 +1,6 @@
 const express = require('express');
+const nanoid = require('nanoid').customAlphabet('1234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ', 4);
+
 var path = require('path');
 const socketIO = require('socket.io');
 
@@ -19,12 +21,10 @@ if (process.env.NODE_ENV === 'production') {
 const server = app.listen(PORT, () => console.log(`Listening on ${PORT}`));
 const io = socketIO(server);
 
-
-let clients = {};
 let client_to_room = {};
 let room_to_clients = {};
 function generateRoom() {
-  return 'aaa';
+  return nanoid(4);
 }
 
 io.on('connection', (socket) => {
