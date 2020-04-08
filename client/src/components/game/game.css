@@ -1,3 +1,54 @@
+.gamePanel, .boardContainer {
+  display: inline;
+}
+
+.gameContainer {
+  display: flex;
+  justify-content: center;
+}
+
+.playerInfo {
+  display: flex;
+  height: 50%;
+}
+
+.playerScore, .playerName {
+  vertical-align: middle;
+  display: table-cell;
+  line-height: 30px;
+}
+
+.playerScore {
+  width: 40px;
+  text-align: center;
+  border-right: 1px solid rgb(186, 186, 186);
+}
+.playerName {
+  padding-left: 10px;
+  width: 160px;
+  text-align: left;
+}
+
+.gamePanel {
+  width: 200px;
+  padding: 15px 5px;
+}
+
+.infoPanel {
+  background-color: #F5F5F5;
+  height: 60px;
+  border-radius: 3px;
+  margin-bottom: 5px;
+  box-shadow: 0 2px 2px 0 rgba(0,0,0,0.14), 0 3px 1px -2px rgba(0,0,0,0.2), 0 1px 5px 0 rgba(0,0,0,0.12);
+}
+
+.controlPanel {
+  background-color: #F5F5F5;
+  height: 87%;
+  padding: 5px;
+  border-radius: 3px;
+}
+
 .reset {
   background-color: #e67f7a;
   border-bottom: 1px solid #ad6d6f;
@@ -22,13 +73,6 @@
 .reset:active {
   background-color: #db8984;  /* 55% saturation of .reset background-color */
   border-bottom: 1px solid 	#bf8d8e;
-}
-
-.bottomBar {
-  display: flex;
-  flex-direction: row;
-  justify-content: center;
-  align-items: center;  
 }
 
 .moveButton {

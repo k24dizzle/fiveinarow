@@ -25,6 +25,8 @@ class Game extends Component {
         replayIndex: null,
         playerX: false,
         playerO: false,
+        playerXScore: 0,
+        playerOScore: 0,
     }
 
     this.playerOnePiece = "X";
@@ -86,6 +88,31 @@ class Game extends Component {
     }
   }
 
+  handleWinner(squares, nextMoves) {
+    if (this.state.winner == null) {
+      var win = checkWin(squares.slice(0), this.w, this.h, this.threshold);
+      if (win !== null) {
+        if (win['player'] === this.playerOnePiece) {
+          this.setState({
+            playerXScore: this.state.playerXScore + 1,
+          });
+        } else {
+          this.setState({
+            playerOScore: this.state.playerOScore + 1,
+          });
+        }
+        this.setState({
+          winner: win['player'],
+          highlight: win['squares'],
+          replayIndex: nextMoves.length - 1,
+        });
+        return true;
+      } else {
+        return false;
+      }
+    }
+  }
+
   handleClick(i, humanMove) {
     if (this.state.squares[i] === null) {
       this.props.socket.emit('handleMove', {
@@ -110,19 +137,11 @@ class Game extends Component {
         moves: nextMoves
       });
       // console.log("[Game] handleClick " + i);
-      if (this.state.winner == null) {
-        win = checkWin(nextSquares.slice(0), this.w, this.h, this.threshold);
-        if (win !== null) {
-          this.setState({
-            winner: win['player'],
-            highlight: win['squares']
-          });
-          return;
-        }
+      if (this.handleWinner(nextSquares, nextMoves)) {
+        return;
       }
-
       // Trigger the bot...
-      if (humanMove && win === null) {
+      if (humanMove) {
         var botMove = this.bot.evaluate(nextSquares, this.w, this.h, this.totalArea, nextMove);
         console.log("Bot Move: " + botMove);
 
@@ -135,15 +154,8 @@ class Game extends Component {
           moves: nextMoves
         });
         // console.log("[Game] handleClick " + i);
-        if (this.state.winner == null) {
-          win = checkWin(nextSquares.slice(0), this.w, this.h, this.threshold);
-          if (win !== null) {
-            this.setState({
-              winner: win['player'],
-              highlight: win['squares'],
-              replayIndex: nextMoves.length - 1
-            })
-          }
+        if (this.handleWinner(nextSquares, nextMoves)) {
+          return;
         }
       }
     }
@@ -168,41 +180,47 @@ class Game extends Component {
     // For the bottomBar, used this to align the elements correctly:
     // https://stackoverflow.com/questions/38948102/center-and-right-align-flexbox-elements
     return (
-      <div>
-            <Board
+      <div className="gameContainer">
+        <div className="boardContainer">
+        <Board
               squares={this.state.squares}
               highlight={this.state.highlight} // Highlighted squares on a win
               height={this.h} width={this.w}
               onClick={i => this.handleClick(i, true)}
             />
-            <div className="bottomBar">
-              <div className="playerSelector">
-                <button className={(this.state.playerX) ? 'playerButton active': 'playerButton'}
-                        onClick={() => this.selectPlayerX()}> 
-                  X
-                </button>
-                <button className={(this.state.playerO) ? 'playerButton pad active': 'playerButton pad'}
-                        onClick={() => this.selectPlayerO()}>
-                  O
-                </button>
-              </div>
-              <button
-                className="reset"
-                onClick={() => this.resetGame()}> Reset Game
-              </button>
-              <div className={(this.state.winner !== null) ? "replay" : "replay hidden"}>
-                <button
-                  className="back moveButton"
-                  onClick={()=> this.goBack()}> 
-                    <i className="fas fa-chevron-left"></i>
-                </button>
-                <button
-                  className="forward moveButton"
-                  onClick={()=> this.goForward()}>
-                    <i className="fas fa-chevron-right"></i>
-                </button>
-              </div>
+        </div>
+        <div className="gamePanel">
+          <div className="infoPanel">
+            <div className="playerInfo">
+              <div className="playerScore">{this.state.playerXScore}</div>
+              <div className="playerName">Player X</div>
             </div>
+            <div className="playerInfo">
+              <div className="playerScore">{this.state.playerOScore}</div>
+              <div className="playerName">Player O</div>
+            </div>
+          </div>
+          <div className="controlPanel">
+            <button
+              className="reset"
+              onClick={() => this.resetGame()}> Reset Game
+            </button>
+            <div className={(this.state.winner !== null) ? "replay" : "replay hidden"}>
+              <button
+                className="back moveButton"
+                onClick={()=> this.goBack()}> 
+                  <i className="fas fa-chevron-left"></i>
+              </button>
+              <button
+                className="forward moveButton"
+                onClick={()=> this.goForward()}>
+                  <i className="fas fa-chevron-right"></i>
+              </button>
+          </div>
+
+              </div>
+        </div>
+
       </div>
     );
   }
