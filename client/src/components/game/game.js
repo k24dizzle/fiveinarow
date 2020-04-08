@@ -8,8 +8,6 @@ import SocketContext from '../socket-context.js'
 class Game extends Component {
   constructor(props) {
     super(props);
-    console.log("GAME");
-    console.log(this.props);
     this.w = parseInt(this.props.width);
     this.h = parseInt(this.props.height);
     this.totalArea = this.w * this.h;
@@ -54,6 +52,10 @@ class Game extends Component {
       playerX: false,
       playerO: false,
     });
+  }
+
+  createGame() {
+    console.log('createGame');
   }
 
   goBack() {
@@ -177,17 +179,16 @@ class Game extends Component {
   }
 
   render() {
-    // For the bottomBar, used this to align the elements correctly:
-    // https://stackoverflow.com/questions/38948102/center-and-right-align-flexbox-elements
+    // TODO: Move Panel out to its own component
     return (
       <div className="gameContainer">
         <div className="boardContainer">
         <Board
-              squares={this.state.squares}
-              highlight={this.state.highlight} // Highlighted squares on a win
-              height={this.h} width={this.w}
-              onClick={i => this.handleClick(i, true)}
-            />
+          squares={this.state.squares}
+          highlight={this.state.highlight} // Highlighted squares on a win
+          height={this.h} width={this.w}
+          onClick={i => this.handleClick(i, true)}
+        />
         </div>
         <div className="gamePanel">
           <div className="infoPanel">
@@ -202,7 +203,11 @@ class Game extends Component {
           </div>
           <div className="controlPanel">
             <button
-              className="reset"
+              className="create coolButton"
+              onClick={() => this.createGame()}> Create Game
+            </button>
+            <button
+              className="reset coolButton"
               onClick={() => this.resetGame()}> Reset Game
             </button>
             <div className={(this.state.winner !== null) ? "replay" : "replay hidden"}>
@@ -216,11 +221,9 @@ class Game extends Component {
                 onClick={()=> this.goForward()}>
                   <i className="fas fa-chevron-right"></i>
               </button>
+            </div>
           </div>
-
-              </div>
         </div>
-
       </div>
     );
   }

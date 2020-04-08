@@ -22,7 +22,9 @@
   width: 40px;
   text-align: center;
   border-right: 1px solid rgb(186, 186, 186);
+  font-size: 18px;
 }
+
 .playerName {
   padding-left: 10px;
   width: 160px;
@@ -45,13 +47,13 @@
 .controlPanel {
   background-color: #F5F5F5;
   height: 87%;
-  padding: 5px;
+  padding-top: 5px;
   border-radius: 3px;
+  text-align: center;
+  position: relative;
 }
 
-.reset {
-  background-color: #e67f7a;
-  border-bottom: 1px solid #ad6d6f;
+.coolButton {
   border-top: 1px solid white;
   border-left: 1px solid white;
   border-right: 1px solid white;
@@ -61,9 +63,15 @@
   font-size: 1rem;
   cursor: pointer;
   outline: none;
-  padding: 0 18px;
   font-weight: 500;
-  display: flex;
+  margin: auto;
+  width: 150px;
+  text-align: center;
+}
+
+.reset {
+  background-color: #e67f7a;
+  border-bottom: 1px solid #ad6d6f;
 }
 
 .reset:hover {
@@ -73,6 +81,20 @@
 .reset:active {
   background-color: #db8984;  /* 55% saturation of .reset background-color */
   border-bottom: 1px solid 	#bf8d8e;
+}
+
+.create {
+  background-color: #2a62c9;
+  border-bottom: 1px solid #214c9c;
+}
+
+.create:hover {
+  background-color: #3b71d4;
+}
+
+.create:active {
+  background-color: #4675cc;  /* 55% saturation of .reset background-color */
+  border-bottom: 1px solid 	#4675cc;
 }
 
 .moveButton {
@@ -95,6 +117,9 @@
 .replay {
   margin-left: auto;
   padding-right: 15px; /* same as the padding for the board */
+  position: absolute;
+  bottom: 5px;
+  width: 100%;
 }
 
 .playerSelector {
