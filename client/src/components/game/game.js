@@ -10,12 +10,11 @@ class Game extends Component {
     super(props);
     this.w = parseInt(this.props.width);
     this.h = parseInt(this.props.height);
-    this.totalArea = this.w * this.h;
     this.threshold = 5;
     this.bot = new PrototypeBot();
     this.state = {
-        squares: Array(this.totalArea).fill(null),
-        xIsNext: true,
+        squares: Array(this.w * this.h).fill(null),
+        myTimeToMove: true,
         stepNumber: 0,
         winner: null,
         highlight: [],
@@ -32,9 +31,6 @@ class Game extends Component {
   }
 
   componentDidMount() {
-    console.log("ALIBABA: ");
-    console.log(window.location.href);
-  
     var roomName = window.location.pathname.substring(1);
     if (roomName !== "") {
       this.props.socket.emit('joinRoom', roomName);
@@ -55,7 +51,6 @@ class Game extends Component {
     this.props.socket.on('roomCreated', function(roomName) {
       console.log('ROOM CREATED %s', roomName);
       window.history.pushState('page2', 'Title', '/' + roomName);
-
       // reset the bot score
       this.setState({
         playerXScore: 0,
@@ -67,7 +62,6 @@ class Game extends Component {
     this.props.socket.on('roomDenied', function(roomName) {
       console.log('roomDenied %s', roomName);
       window.history.pushState('page2', 'Title', '/');
-
       this.setState({
         room: false,
       });
@@ -85,8 +79,8 @@ class Game extends Component {
   resetGame() {
     // Reset the state of the game
     this.setState({
-      squares: Array(this.totalArea).fill(null),
-      xIsNext: true,
+      squares: Array(this.w * this.h).fill(null),
+      myTimeToMove: true,
       stepNumber: 0,
       winner: null,
       highlight: [],
@@ -165,9 +159,9 @@ class Game extends Component {
         index: i,
       });
     }
-    // Square was clicked!
-    var move = this.state.xIsNext ? this.playerOnePiece : this.playerTwoPiece;
-    var nextMove = this.state.xIsNext ? this.playerTwoPiece : this.playerOnePiece;
+
+    var move = this.playerOnePiece;
+    var nextMove = this.playerTwoPiece;
 
     const nextSquares = this.state.squares.slice(0);
     let nextMoves = this.state.moves.slice(0);
@@ -176,31 +170,27 @@ class Game extends Component {
       nextMoves = nextMoves.concat([i]);
       this.setState({
         squares: nextSquares,
-        xIsNext: !this.state.xIsNext,
+        myTimeToMove: !this.state.myTimeToMove,
         stepNumber: this.state.stepNumber + 1,
         moves: nextMoves
       });
       // console.log("[Game] handleClick " + i);
-      if (this.handleWinner(nextSquares, nextMoves)) {
-        return;
-      }
+      if (this.handleWinner(nextSquares, nextMoves)) { return; }
+
       // Trigger the bot...
       if (this.state.room === false) {
         var botMove = this.bot.evaluate(nextSquares, this.w, this.h, this.totalArea, nextMove);
         console.log("Bot Move: " + botMove);
-
         nextSquares[botMove] = nextMove;
         nextMoves = nextMoves.concat([botMove]);
         this.setState({
           squares: nextSquares,
-          xIsNext: this.state.xIsNext,
+          myTimeToMove: this.state.myTimeToMove,
           stepNumber: this.state.stepNumber + 1,
           moves: nextMoves
         });
         // console.log("[Game] handleClick " + i);
-        if (this.handleWinner(nextSquares, nextMoves)) {
-          return;
-        }
+        if (this.handleWinner(nextSquares, nextMoves)) { return; }
       }
     }
   }

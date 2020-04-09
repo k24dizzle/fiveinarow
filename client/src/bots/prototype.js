@@ -205,7 +205,7 @@ class PrototypeBot {
     // Given the board and player, return the best move based on some stuff
     this.w = width;
     this.h = height;
-    this.totalArea = totalArea;
+    this.totalArea = this.w * this.h;
 
     if (move === "O") {
       this.playerMult["O"] = 1;
