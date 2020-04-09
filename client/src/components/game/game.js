@@ -21,10 +21,10 @@ class Game extends Component {
         highlight: [],
         moves: [],
         replayIndex: null,
-        playerX: false,
-        playerO: false,
         playerXScore: 0,
         playerOScore: 0,
+
+        room: false,
     }
 
     this.playerOnePiece = "X";
@@ -34,6 +34,18 @@ class Game extends Component {
   componentDidMount() {
     console.log("ALIBABA: ");
     console.log(window.location.href);
+  
+    var roomName = window.location.pathname.substring(1);
+    if (roomName !== "") {
+      this.props.socket.emit('joinRoom', roomName);
+      // An attempt was made to join a room
+      this.setState({
+        room: true,
+        playerXScore: 0,
+        playerOScore: 0,
+      });
+    }
+  
     this.props.socket.on('declareMove', function(msg){
       console.log('client declareMove: ' + msg);
       console.log(this);
@@ -42,7 +54,31 @@ class Game extends Component {
 
     this.props.socket.on('roomCreated', function(roomName) {
       console.log('ROOM CREATED %s', roomName);
-      window.history.pushState('page2', 'Title', '/'+roomName);
+      window.history.pushState('page2', 'Title', '/' + roomName);
+
+      // reset the bot score
+      this.setState({
+        playerXScore: 0,
+        playerOScore: 0,
+        room: true,
+      });
+    }.bind(this));
+
+    this.props.socket.on('roomDenied', function(roomName) {
+      console.log('roomDenied %s', roomName);
+      window.history.pushState('page2', 'Title', '/');
+
+      this.setState({
+        room: false,
+      });
+    }.bind(this));
+
+    this.props.socket.on('roomUpdated', function(data) {
+      console.log("[Client] Someone joined this room");
+      console.log(data);
+      if(data['clients'].length >= 2) {
+        // Two clients are in the room, somehow signal that a game can be started and who's move is it first
+      }
     });
   }
 
@@ -56,8 +92,6 @@ class Game extends Component {
       highlight: [],
       moves: [],
       replayIndex: null,
-      playerX: false,
-      playerO: false,
     });
   }
 
@@ -122,14 +156,13 @@ class Game extends Component {
     }
   }
 
-  handleClick(i, humanMove) {
+  handleClick(i) {
     if (this.state.winner !== null) {
       return;
     }
     if (this.state.squares[i] === null) {
       this.props.socket.emit('handleMove', {
         index: i,
-        humanMove: humanMove,
       });
     }
     // Square was clicked!
@@ -152,7 +185,7 @@ class Game extends Component {
         return;
       }
       // Trigger the bot...
-      if (humanMove) {
+      if (this.state.room === false) {
         var botMove = this.bot.evaluate(nextSquares, this.w, this.h, this.totalArea, nextMove);
         console.log("Bot Move: " + botMove);
 
@@ -172,21 +205,6 @@ class Game extends Component {
     }
   }
 
-  selectPlayerX() {
-    console.log(this.state.playerX);
-    this.setState({
-      playerX: !this.state.playerX,
-      playerO: null,
-    });
-  }
-
-  selectPlayerO() {
-    this.setState({
-      playerX: null,
-      playerO: !this.state.playerO,
-    });
-  }
-
   render() {
     // TODO: Move Panel out to its own component
     return (
@@ -196,7 +214,7 @@ class Game extends Component {
           squares={this.state.squares}
           highlight={this.state.highlight} // Highlighted squares on a win
           height={this.h} width={this.w}
-          onClick={i => this.handleClick(i, true)}
+          onClick={i => this.handleClick(i)}
         />
         </div>
         <div className="gamePanel">

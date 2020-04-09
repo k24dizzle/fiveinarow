@@ -41,7 +41,7 @@ io.on('connection', (socket) => {
   socket.on('disconnect', () => console.log('Client disconnected'));
 
   socket.on('createGame', function(){
-    console.log("[%s] wants to create a room", socket.id);
+    console.log("[createGame] %s wants to create a room", socket.id);
   
     var roomName = generateRoom();
     client_to_room[socket.id] = roomName;
@@ -50,6 +50,36 @@ io.on('connection', (socket) => {
 
     socket.emit('roomCreated', roomName);
   });
+
+  socket.on('joinRoom', function(roomName){
+    console.log("[joinRoom] %s wants to join %s", socket.id, roomName);
+    // When a player joins a room
+    if (roomName in room_to_clients) {
+      var room = room_to_clients[roomName];
+      if (room.length < 2 && !room.includes(socket.id)) {
+        socket.join(roomName);
+        room_to_clients[roomName].push(socket.id);
+        client_to_room[socket.id] = roomName;
+      
+        io.to(roomName).emit('roomUpdated', {
+          clients: room_to_clients[roomName],
+          roomName: roomName,
+        });
+      } else if (room.includes(socket.id)) {
+        socket.join(roomName);
+
+        io.to(roomName).emit('roomUpdated', {
+          clients: room_to_clients[roomName],
+          roomName: roomName,
+        });
+      } else {
+        socket.emit('roomDenied', roomName);
+      }
+    } else {
+      console.log("%s tried to join non-room %s", socket.id, roomName);
+      socket.emit('roomDenied', roomName);
+    }
+  })
 
 });
 
