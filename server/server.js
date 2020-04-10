@@ -84,6 +84,18 @@ io.on('connection', (socket) => {
       console.log("%s tried to join non-room %s", socket.id, roomName);
       socket.emit('roomDenied', roomName);
     }
-  })
+  });
+
+  socket.on('chatInput', function(data) {
+    var roomName = data['roomName'];
+    var value = data['value'];
+    console.log("chat data ");
+    console.log(data);
+    if (roomName !== null) {
+      io.to(roomName).emit('chatRecieved', value);
+    } else {
+      socket.emit('chatRecieved', value);
+    }
+  });
 
 });
