@@ -14,7 +14,6 @@ class Game extends Component {
     this.bot = new PrototypeBot();
     this.state = {
         squares: Array(this.w * this.h).fill(null),
-        myTimeToMove: true,
         stepNumber: 0,
         winner: null,
         highlight: [],
@@ -23,7 +22,12 @@ class Game extends Component {
         playerXScore: 0,
         playerOScore: 0,
 
+        // Variables for multiplayer
+        myTimeToMove: true,
         room: false,
+        readyToPlay: false,
+
+        startButtonClicked: false,
     }
 
     this.playerOnePiece = "X";
@@ -40,6 +44,10 @@ class Game extends Component {
         playerXScore: 0,
         playerOScore: 0,
       });
+    } else {
+      this.setState({
+        readyToPlay: true,
+      });
     }
   
     this.props.socket.on('declareMove', function(msg){
@@ -51,7 +59,7 @@ class Game extends Component {
     this.props.socket.on('roomCreated', function(roomName) {
       console.log('ROOM CREATED %s', roomName);
       window.history.pushState('page2', 'Title', '/' + roomName);
-      // reset the bot score
+      // reset the scores
       this.setState({
         playerXScore: 0,
         playerOScore: 0,
@@ -64,6 +72,7 @@ class Game extends Component {
       window.history.pushState('page2', 'Title', '/');
       this.setState({
         room: false,
+        readyToPlay: false,
       });
     }.bind(this));
 
@@ -72,8 +81,15 @@ class Game extends Component {
       console.log(data);
       if(data['clients'].length >= 2) {
         // Two clients are in the room, somehow signal that a game can be started and who's move is it first
+        this.setState({
+          readyToPlay: true,
+        });
+      } else {
+        this.setState({
+          readyToPlay: false,
+        });
       }
-    });
+    }.bind(this));
   }
 
   resetGame() {
@@ -151,7 +167,7 @@ class Game extends Component {
   }
 
   handleClick(i) {
-    if (this.state.winner !== null) {
+    if (this.state.winner !== null || (this.state.room && !this.state.readyToPlay)) {
       return;
     }
     if (this.state.squares[i] === null) {
@@ -162,6 +178,11 @@ class Game extends Component {
 
     var move = this.playerOnePiece;
     var nextMove = this.playerTwoPiece;
+
+    if (!this.state.myTimeToMove) {
+      move = this.playerTwoPiece;
+      nextMove = this.playerOnePiece;
+    }
 
     const nextSquares = this.state.squares.slice(0);
     let nextMoves = this.state.moves.slice(0);
@@ -179,7 +200,7 @@ class Game extends Component {
 
       // Trigger the bot...
       if (this.state.room === false) {
-        var botMove = this.bot.evaluate(nextSquares, this.w, this.h, this.totalArea, nextMove);
+        var botMove = this.bot.evaluate(nextSquares, this.w, this.h, nextMove);
         console.log("Bot Move: " + botMove);
         nextSquares[botMove] = nextMove;
         nextMoves = nextMoves.concat([botMove]);
@@ -193,6 +214,10 @@ class Game extends Component {
         if (this.handleWinner(nextSquares, nextMoves)) { return; }
       }
     }
+  }
+
+  startGame() {
+    console.log("start game " + this.state.readyToPlay);
   }
 
   render() {
@@ -220,12 +245,17 @@ class Game extends Component {
           </div>
           <div className="controlPanel">
             <button
-              className="create coolButton"
+              className={(!this.state.room) ? "create coolButton" : "create coolButton hidden"}
               onClick={() => this.createGame()}> Create Game
             </button>
             <button
-              className="reset coolButton"
+              className={(!this.state.room) ? "reset coolButton" : "reset coolButton hidden"}
               onClick={() => this.resetGame()}> Reset Game
+            </button>
+            <button
+              className={(this.state.room) ? "start coolButton" : "start coolButton hidden"}
+              onClick={() => this.startGame()}
+              disabled={!this.state.readyToPlay}> Start Game
             </button>
             <div className={(this.state.winner !== null) ? "replay" : "replay hidden"}>
               <button

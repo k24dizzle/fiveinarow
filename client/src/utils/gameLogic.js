@@ -111,6 +111,7 @@ function isWithinOneOf(a, b) {
 function exploreDiagonal(index, squares, w, threshold, indexFunction) {
   // Given a starting index of a diagonal, explores down that path
   var combo, curComboValue, comboSquares;
+  comboSquares = [];
   var prevIndexMod = index % w;
   while (index < squares.length && isWithinOneOf(prevIndexMod, index % w)) {
     var value = squares[index];
