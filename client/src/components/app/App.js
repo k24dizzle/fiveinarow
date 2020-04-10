@@ -7,12 +7,6 @@ import SocketContext from '../socket-context.js'
 const socket = io(window.location.hostname + ":443");
 
 class App extends Component {
-  componentDidMount() {
-    socket.on('time', function(msg){
-      console.log('client time: ' + msg);
-    });
-  }
-
   render() {
     // this.callApi();
     return (

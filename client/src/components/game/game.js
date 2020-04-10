@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import Board from '../board/board.js';
+import Chat from '../chat/chat.js';
 import PrototypeBot from '../../bots/prototype.js';
 import { checkWin } from '../../utils/gameLogic.js';
 import './game.css';
@@ -24,7 +25,7 @@ class Game extends Component {
 
         // Variables for multiplayer
         myTimeToMove: true,
-        room: false,
+        roomName: null,
         readyToPlay: false,
 
         startButtonClicked: false,
@@ -43,6 +44,7 @@ class Game extends Component {
         room: true,
         playerXScore: 0,
         playerOScore: 0,
+        roomName: roomName,
       });
     } else {
       this.setState({
@@ -63,7 +65,7 @@ class Game extends Component {
       this.setState({
         playerXScore: 0,
         playerOScore: 0,
-        room: true,
+        roomName: roomName,
       });
     }.bind(this));
 
@@ -71,7 +73,7 @@ class Game extends Component {
       console.log('roomDenied %s', roomName);
       window.history.pushState('page2', 'Title', '/');
       this.setState({
-        room: false,
+        roomName: null,
         readyToPlay: false,
       });
     }.bind(this));
@@ -245,18 +247,23 @@ class Game extends Component {
           </div>
           <div className="controlPanel">
             <button
-              className={(!this.state.room) ? "create coolButton" : "create coolButton hidden"}
+              className={(this.state.roomName === null) ? "create coolButton" : "create coolButton hidden"}
               onClick={() => this.createGame()}> Create Game
             </button>
             <button
-              className={(!this.state.room) ? "reset coolButton" : "reset coolButton hidden"}
+              className={(this.state.roomName === null) ? "reset coolButton" : "reset coolButton hidden"}
               onClick={() => this.resetGame()}> Reset Game
             </button>
             <button
-              className={(this.state.room) ? "start coolButton" : "start coolButton hidden"}
+              className={(this.state.roomName !== null) ? "start coolButton" : "start coolButton hidden"}
               onClick={() => this.startGame()}
               disabled={!this.state.readyToPlay}> Start Game
             </button>
+
+            <Chat
+              roomName={this.state.roomName}
+              test={"test"}
+            />
             <div className={(this.state.winner !== null) ? "replay" : "replay hidden"}>
               <button
                 className="back moveButton"
