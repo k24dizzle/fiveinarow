@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import Board from '../board/board.js';
 import Chat from '../chat/chat.js';
-import PrototypeBot from '../../bots/prototype.js';
+import { easyBot } from '../../bots/bots.js';
 import { checkWin } from '../../utils/gameLogic.js';
 import './game.css';
 import SocketContext from '../socket-context.js'
@@ -12,7 +12,7 @@ class Game extends Component {
     this.w = parseInt(this.props.width);
     this.h = parseInt(this.props.height);
     this.threshold = 5;
-    this.bot = new PrototypeBot();
+    this.bot = easyBot;
     this.state = {
         squares: Array(this.w * this.h).fill(null),
         stepNumber: 0,
