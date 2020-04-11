@@ -38,10 +38,11 @@ io.on('connection', (socket) => {
   console.log('room_to_clients');
   console.log(room_to_clients);
   console.log('Client connected %s', socket.id);
+
   socket.on('handleMove', function(data) {
     console.log('handleMove:');
     console.log(data);
-    io.emit('declareMove', data);
+    io.to(data['roomName']).emit('declareMove', data);
   });
   socket.on('disconnect', () => console.log('Client disconnected'));
 

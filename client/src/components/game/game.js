@@ -46,16 +46,12 @@ class Game extends Component {
         playerOScore: 0,
         roomName: roomName,
       });
-    } else {
-      this.setState({
-        readyToPlay: true,
-      });
     }
   
     this.props.socket.on('declareMove', function(msg){
       console.log('client declareMove: ' + msg);
       console.log(this);
-      this.handleClick(msg['index'], msg['humanMove']);
+      this.handleClick(msg['index']);
     }.bind(this));
 
     this.props.socket.on('roomCreated', function(roomName) {
@@ -80,7 +76,7 @@ class Game extends Component {
 
     this.props.socket.on('roomUpdated', function(data) {
       console.log("[Client] Someone joined this room");
-      console.log(data);
+      console.log(data['clients']);
       if(data['clients'].length >= 2) {
         // Two clients are in the room, somehow signal that a game can be started and who's move is it first
         this.setState({
@@ -169,12 +165,13 @@ class Game extends Component {
   }
 
   handleClick(i) {
-    if (this.state.winner !== null || (this.state.room && !this.state.readyToPlay)) {
+    if (this.state.winner !== null || (this.state.room !== null && !this.state.readyToPlay)) {
       return;
     }
-    if (this.state.squares[i] === null) {
+    if (this.state.squares[i] === null && this.state.room !== null) {
       this.props.socket.emit('handleMove', {
         index: i,
+        roomName: this.state.roomName
       });
     }
 
@@ -201,7 +198,7 @@ class Game extends Component {
       if (this.handleWinner(nextSquares, nextMoves)) { return; }
 
       // Trigger the bot...
-      if (this.state.room === false) {
+      if (this.state.room === null) {
         var botMove = this.bot.evaluate(nextSquares, this.w, this.h, nextMove);
         console.log("Bot Move: " + botMove);
         nextSquares[botMove] = nextMove;
