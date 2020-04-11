@@ -1,3 +1,20 @@
 .chat {
-    background-color: green;
+    background-color: #F5F5F5;
+    position: relative;
+}
+
+.room {
+    height: 90%;
+}
+
+.lobby {
+    height: 80%;
+}
+
+.chatInput {
+    width: 93%;
+    padding: 3px 5px;
+    position: absolute;
+    right:    0;
+    bottom:   0;
 }

@@ -24,6 +24,7 @@ class Chat extends Component {
 
     componentWillReceiveProps(nextProps) {
         if (nextProps.roomName !== this.state.roomName) {
+            console.log("[Room Change, Reset Chat] " + nextProps.roomName + " " + this.state.roomName);
             this.setState({
                 chatLog: [],
             });
@@ -56,7 +57,7 @@ class Chat extends Component {
 
     render() {
       return (
-        <div className="chat">
+        <div className={(this.props.roomName === null) ? "chat lobby" : "chat room"}>
             Chat goes here
             <br></br>
             {this.renderChatLog()}

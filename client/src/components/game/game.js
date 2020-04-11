@@ -165,10 +165,10 @@ class Game extends Component {
   }
 
   handleClick(i) {
-    if (this.state.winner !== null || (this.state.room !== null && !this.state.readyToPlay)) {
+    if (this.state.winner !== null || (this.state.roomName !== null && !this.state.readyToPlay)) {
       return;
     }
-    if (this.state.squares[i] === null && this.state.room !== null) {
+    if (this.state.squares[i] === null && this.state.roomName !== null) {
       this.props.socket.emit('handleMove', {
         index: i,
         roomName: this.state.roomName
@@ -198,7 +198,7 @@ class Game extends Component {
       if (this.handleWinner(nextSquares, nextMoves)) { return; }
 
       // Trigger the bot...
-      if (this.state.room === null) {
+      if (this.state.roomName === null) {
         var botMove = this.bot.evaluate(nextSquares, this.w, this.h, nextMove);
         console.log("Bot Move: " + botMove);
         nextSquares[botMove] = nextMove;
@@ -243,6 +243,10 @@ class Game extends Component {
             </div>
           </div>
           <div className="controlPanel">
+            <Chat
+              roomName={this.state.roomName}
+              test={"test"}
+            />
             <button
               className={(this.state.roomName === null) ? "create coolButton" : "create coolButton hidden"}
               onClick={() => this.createGame()}> Create Game
@@ -256,11 +260,6 @@ class Game extends Component {
               onClick={() => this.startGame()}
               disabled={!this.state.readyToPlay}> Start Game
             </button>
-
-            <Chat
-              roomName={this.state.roomName}
-              test={"test"}
-            />
             <div className={(this.state.winner !== null) ? "replay" : "replay hidden"}>
               <button
                 className="back moveButton"
