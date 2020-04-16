@@ -12,7 +12,6 @@ class App extends Component {
     return (
       <SocketContext.Provider value={socket}>
         <div className="App">
-          <h1 className="header"> Five In A Row! </h1>
           <div className="gameContainer">
             <Game height="15" width="15"/>
           </div>

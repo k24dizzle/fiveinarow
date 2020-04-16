@@ -3,6 +3,6 @@ Framework for competing bots against each other
 Share games (replay games) with a link?
 
 - Handle people leaving rooms (room management)
-- Chat for rooms
 - Start game button 
 - Move indicator (who's move is it) (bold the player X or player O)
+- Handle chat logic (say if someone created room, joined a room, who won game, offer to switch spots?)

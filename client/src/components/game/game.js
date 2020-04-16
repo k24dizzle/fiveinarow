@@ -11,7 +11,7 @@ import 'react-dropdown/style.css';
 class Game extends Component {
   constructor(props) {
     super(props);
-    this.onSelect = this.onSelect.bind(this);
+    this.onDropdownSelect = this.onDropdownSelect.bind(this);
     this.w = parseInt(this.props.width);
     this.h = parseInt(this.props.height);
     this.threshold = 5;
@@ -181,9 +181,7 @@ class Game extends Component {
     }
   }
 
-  onSelect(test) {
-    console.log("ON SELECT");
-    console.log(test);
+  onDropdownSelect(test) {
     this.setState({
       selectedBotIndex: test['value'],
     });
@@ -295,7 +293,13 @@ class Game extends Component {
               onClick={() => this.startGame()}
               disabled={!this.state.readyToPlay}> Start Game
             </button>
-            <Dropdown className="dropdown" options={dropdownOptions} onChange={this.onSelect} value={dropdownOptions[this.state.selectedBotIndex]['label']} placeholder="Select an option" />
+            <Dropdown
+              className={(this.state.roomName === null) ? "dropdown" : "dropdown hidden"}
+              options={dropdownOptions}
+              onChange={this.onDropdownSelect}
+              value={dropdownOptions[this.state.selectedBotIndex]['label']}
+              placeholder="Select an option"
+            />
             <div className={(this.state.winner !== null) ? "replay" : "replay hidden"}>
               <button
                 className="back moveButton"
