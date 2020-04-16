@@ -1,10 +1,12 @@
 import React, { Component } from 'react';
 import Board from '../board/board.js';
 import Chat from '../chat/chat.js';
-import { easyBot } from '../../bots/bots.js';
+import { easyBot, mediumBot, hardBot } from '../../bots/bots.js';
 import { checkWin } from '../../utils/gameLogic.js';
 import './game.css';
 import SocketContext from '../socket-context.js'
+import Dropdown from 'react-dropdown';
+import 'react-dropdown/style.css';
 
 class Game extends Component {
   constructor(props) {
@@ -12,7 +14,11 @@ class Game extends Component {
     this.w = parseInt(this.props.width);
     this.h = parseInt(this.props.height);
     this.threshold = 5;
-    this.bot = easyBot;
+    this.bots = {
+      'Easy': easyBot,
+      'Medium': mediumBot,
+      'Hard': hardBot,
+    };
     this.state = {
         squares: Array(this.w * this.h).fill(null),
         stepNumber: 0,
@@ -199,7 +205,7 @@ class Game extends Component {
 
       // Trigger the bot...
       if (this.state.roomName === null) {
-        var botMove = this.bot.evaluate(nextSquares, this.w, this.h, nextMove);
+        var botMove = this.bots[0].evaluate(nextSquares, this.w, this.h, nextMove);
         console.log("Bot Move: " + botMove);
         nextSquares[botMove] = nextMove;
         nextMoves = nextMoves.concat([botMove]);
@@ -221,6 +227,8 @@ class Game extends Component {
 
   render() {
     // TODO: Move Panel out to its own component
+    let botDifficulties = Object.keys(this.bots);
+  
     return (
       <div className="gameContainer">
         <div className="boardContainer">
@@ -260,6 +268,7 @@ class Game extends Component {
               onClick={() => this.startGame()}
               disabled={!this.state.readyToPlay}> Start Game
             </button>
+            <Dropdown options={botDifficulties} onChange={this._onSelect} value={botDifficulties[0]} placeholder="Select an option" />
             <div className={(this.state.winner !== null) ? "replay" : "replay hidden"}>
               <button
                 className="back moveButton"
