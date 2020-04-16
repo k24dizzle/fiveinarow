@@ -295,7 +295,7 @@ class Game extends Component {
               onClick={() => this.startGame()}
               disabled={!this.state.readyToPlay}> Start Game
             </button>
-            <Dropdown options={dropdownOptions} onChange={this.onSelect} value={dropdownOptions[this.state.selectedBotIndex]['label']} placeholder="Select an option" />
+            <Dropdown className="dropdown" options={dropdownOptions} onChange={this.onSelect} value={dropdownOptions[this.state.selectedBotIndex]['label']} placeholder="Select an option" />
             <div className={(this.state.winner !== null) ? "replay" : "replay hidden"}>
               <button
                 className="back moveButton"

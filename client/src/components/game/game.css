@@ -159,3 +159,10 @@
 .hidden {
   display: none;
 }
+
+.dropdown {
+  left: 50%;
+  transform: translateX(-50%);
+  width: 90%;
+  text-align: center;
+}
