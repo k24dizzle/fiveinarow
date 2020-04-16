@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import Board from '../board/board.js';
 import Chat from '../chat/chat.js';
+import Dropdown from '../dropdown/dropdown.js'
 import { easyBot } from '../../bots/bots.js';
 import { checkWin } from '../../utils/gameLogic.js';
 import './game.css';
@@ -260,6 +261,10 @@ class Game extends Component {
               onClick={() => this.startGame()}
               disabled={!this.state.readyToPlay}> Start Game
             </button>
+            <Dropdown
+              roomName={this.state.roomName}
+              bots={[this.bot]}
+            />
             <div className={(this.state.winner !== null) ? "replay" : "replay hidden"}>
               <button
                 className="back moveButton"

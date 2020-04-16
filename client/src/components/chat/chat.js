@@ -57,7 +57,7 @@ class Chat extends Component {
 
     render() {
       return (
-        <div className={(this.props.roomName === null) ? "chat lobby" : "chat room"}>
+        <div className={(this.props.roomName === null) ? "chat lobby hidden" : "chat room"}>
             Chat goes here
             <br></br>
             {this.renderChatLog()}

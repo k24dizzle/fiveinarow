@@ -1,0 +1,47 @@
+.hidden {
+    visibility: hidden;
+}
+
+.coolButton {
+    border-top: 1px solid white;
+    border-left: 1px solid white;
+    border-right: 1px solid white;
+    border-radius: 3px;
+    color: #f2f2f2;
+    height: 44px;
+    font-size: 1rem;
+    cursor: pointer;
+    outline: none;
+    font-weight: 500;
+    margin: auto;
+    width: 150px;
+    text-align: center;
+    margin-bottom: 5px;
+  }
+  
+.coolButton {
+background-color: #e67f7a;
+border-bottom: 1px solid #ad6d6f;
+}
+
+.coolButton:hover {
+background-color: #e26f69;
+}
+
+.coolButton:active {
+background-color: #db8984;  /* 55% saturation of .reset background-color */
+border-bottom: 1px solid 	#bf8d8e;
+}
+
+.dropdownOption {
+    display: block;
+    width: 100%;
+    padding: .25rem 1.5rem;
+    clear: both;
+    font-weight: 400;
+    color: #212529;
+    text-align: inherit;
+    white-space: nowrap;
+    background-color: transparent;
+    border: 0;
+}
