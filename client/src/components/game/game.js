@@ -11,14 +11,24 @@ import 'react-dropdown/style.css';
 class Game extends Component {
   constructor(props) {
     super(props);
+    this.onSelect = this.onSelect.bind(this);
     this.w = parseInt(this.props.width);
     this.h = parseInt(this.props.height);
     this.threshold = 5;
-    this.bots = {
-      'Easy': easyBot,
-      'Medium': mediumBot,
-      'Hard': hardBot,
-    };
+    this.bots = [
+      {
+        label: 'Easy',
+        bot: easyBot,
+      },
+      {
+        label: 'Medium',
+        bot: mediumBot,
+      },
+      {
+        label: 'Hard',
+        bot: hardBot,
+      },
+    ];
     this.state = {
         squares: Array(this.w * this.h).fill(null),
         stepNumber: 0,
@@ -28,6 +38,7 @@ class Game extends Component {
         replayIndex: null,
         playerXScore: 0,
         playerOScore: 0,
+        selectedBotIndex: 0,
 
         // Variables for multiplayer
         myTimeToMove: true,
@@ -170,6 +181,14 @@ class Game extends Component {
     }
   }
 
+  onSelect(test) {
+    console.log("ON SELECT");
+    console.log(test);
+    this.setState({
+      selectedBotIndex: test['value'],
+    });
+  }
+
   handleClick(i) {
     if (this.state.winner !== null || (this.state.roomName !== null && !this.state.readyToPlay)) {
       return;
@@ -205,8 +224,9 @@ class Game extends Component {
 
       // Trigger the bot...
       if (this.state.roomName === null) {
-        var botMove = this.bots[0].evaluate(nextSquares, this.w, this.h, nextMove);
-        console.log("Bot Move: " + botMove);
+        var botIndex = this.state.selectedBotIndex;
+        var botMove = this.bots[botIndex]['bot'].evaluate(nextSquares, this.w, this.h, nextMove);
+        console.log("Bot Move: " + botMove + " " + botIndex);
         nextSquares[botMove] = nextMove;
         nextMoves = nextMoves.concat([botMove]);
         this.setState({
@@ -227,7 +247,14 @@ class Game extends Component {
 
   render() {
     // TODO: Move Panel out to its own component
-    let botDifficulties = Object.keys(this.bots);
+    let dropdownOptions = []
+    for (let i = 0; i < this.bots.length; i++) {
+      let option = {
+        label: this.bots[i]['label'],
+        value: i,
+      }
+      dropdownOptions.push(option)
+    }
   
     return (
       <div className="gameContainer">
@@ -268,7 +295,7 @@ class Game extends Component {
               onClick={() => this.startGame()}
               disabled={!this.state.readyToPlay}> Start Game
             </button>
-            <Dropdown options={botDifficulties} onChange={this._onSelect} value={botDifficulties[0]} placeholder="Select an option" />
+            <Dropdown options={dropdownOptions} onChange={this.onSelect} value={dropdownOptions[this.state.selectedBotIndex]['label']} placeholder="Select an option" />
             <div className={(this.state.winner !== null) ? "replay" : "replay hidden"}>
               <button
                 className="back moveButton"
