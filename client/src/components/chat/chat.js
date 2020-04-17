@@ -11,6 +11,12 @@ class Chat extends Component {
     }
 
     componentDidMount() {
+        // TODO: Move this out to game.js
+        // have game.js handle all the possible chat updates, it is up to game.js to update the chat log
+        // It is up to game.js to reset the chat
+        // 1. Chat Recieved (from other player)
+        // 2. Room Created (Player X has created room ****, invite another player to [link] to start a game)
+        // 3. Player O (Player O has joined room ****)
         this.props.socket.on('chatRecieved', function(value) {
             console.log("Chat recieved");
             var chatLog = this.state.chatLog;

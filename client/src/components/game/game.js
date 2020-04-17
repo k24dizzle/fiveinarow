@@ -52,6 +52,21 @@ class Game extends Component {
     this.playerTwoPiece = "O";
   }
 
+  _handleKeyDown = (event) => {
+    if (this.state.winner !== null) {
+      switch(event.keyCode) {
+          case 37: // left arrow
+            this.goBack();
+            break;
+          case 39: // right arrow
+            this.goForward();
+            break;
+          default:
+              break;
+      }
+    }
+  }
+
   componentDidMount() {
     var roomName = window.location.pathname.substring(1);
     if (roomName !== "") {
@@ -64,6 +79,9 @@ class Game extends Component {
         roomName: roomName,
       });
     }
+
+    // For replay
+    document.addEventListener("keydown", this._handleKeyDown);
   
     this.props.socket.on('declareMove', function(msg){
       console.log('client declareMove: ' + msg);
@@ -278,11 +296,11 @@ class Game extends Component {
           <div className="controlPanel">
             <Chat
               roomName={this.state.roomName}
-              test={"test"}
+              // handleChatInput={this.handleChatInput}
             />
             <button
               className={(this.state.roomName === null) ? "create coolButton" : "create coolButton hidden"}
-              onClick={() => this.createGame()}> Create Game
+              onClick={() => this.createGame()}> Create Room
             </button>
             <button
               className={(this.state.roomName === null) ? "reset coolButton" : "reset coolButton hidden"}
@@ -299,6 +317,7 @@ class Game extends Component {
               onChange={this.onDropdownSelect}
               value={dropdownOptions[this.state.selectedBotIndex]['label']}
               placeholder="Select an option"
+              disabled={this.state.moves.length > 0}
             />
             <div className={(this.state.winner !== null) ? "replay" : "replay hidden"}>
               <button
