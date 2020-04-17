@@ -337,13 +337,13 @@ class Game extends Component {
         <div className="gamePanel">
           <div className="infoPanel">
             <div className="playerInfo">
-              <div className={(playerMove === 0) ? "playerScore bold" : "playerScore"}>{this.state.playerXScore}</div>
-              <div className={(playerMove === 0) ? "playerName bold" : "playerName"}>Player X</div>
+              <div className={(playerMove === 0 && this.state.readyToPlay) ? "playerScore bold" : "playerScore"}>{this.state.playerXScore}</div>
+              <div className={(playerMove === 0 && this.state.readyToPlay) ? "playerName bold" : "playerName"}>Player X</div>
               {playerXIcon}
             </div>
             <div className="playerInfo">
-              <div className={(playerMove === 1) ? "playerScore bold" : "playerScore"}>{this.state.playerOScore}</div>
-              <div className={(playerMove === 1) ? "playerName bold" : "playerName"}>Player O</div>
+              <div className={(playerMove === 1 && this.state.readyToPlay) ? "playerScore bold" : "playerScore"}>{this.state.playerOScore}</div>
+              <div className={(playerMove === 1 && this.state.readyToPlay) ? "playerName bold" : "playerName"}>Player O</div>
               {playerOIcon}
             </div>
           </div>
