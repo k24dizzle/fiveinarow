@@ -12,7 +12,7 @@
   height: 50%;
 }
 
-.playerScore, .playerName {
+.playerScore, .playerName, .playerIcon {
   vertical-align: middle;
   display: table-cell;
   line-height: 30px;
@@ -27,8 +27,13 @@
 
 .playerName {
   padding-left: 10px;
-  width: 160px;
+  width: 120px;
   text-align: left;
+}
+
+.playerIcon {
+  text-align: right;
+  padding-right: 10px;
 }
 
 .gamePanel {

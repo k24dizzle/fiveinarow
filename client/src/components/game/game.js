@@ -7,6 +7,10 @@ import './game.css';
 import SocketContext from '../socket-context.js'
 import Dropdown from 'react-dropdown';
 import 'react-dropdown/style.css';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faUser as currentUser } from '@fortawesome/free-solid-svg-icons'
+import { faUser as otherUser } from '@fortawesome/free-regular-svg-icons'
+
 
 class Game extends Component {
   constructor(props) {
@@ -293,6 +297,30 @@ class Game extends Component {
     if (this.state.roomName === null) {
       playerMove = -1;
     }
+
+    var playerXIcon = "";
+    if (this.state.roomName !== null && this.state.clients[0] === this.state.clientID) {
+      playerXIcon = (
+        <div className="playerIcon"><FontAwesomeIcon icon={currentUser} /></div>
+      );
+    } else if (this.state.roomName !== null) {
+      playerXIcon = (
+        <div className="playerIcon"><FontAwesomeIcon icon={otherUser} /></div>
+      );
+    }
+
+    var playerOIcon = "";
+    if (this.state.roomName !== null && this.state.clients[1] === this.state.clientID) {
+      playerOIcon = (
+        <div className="playerIcon"><FontAwesomeIcon icon={currentUser} /></div>
+      );
+    } else if (this.state.roomName !== null && this.state.clients.length > 1) {
+      playerOIcon = (
+        <div className="playerIcon"><FontAwesomeIcon icon={otherUser} /></div>
+      );
+    }
+
+  
     console.log('playermove');
     console.log(playerMove);
   
@@ -311,10 +339,12 @@ class Game extends Component {
             <div className="playerInfo">
               <div className={(playerMove === 0) ? "playerScore bold" : "playerScore"}>{this.state.playerXScore}</div>
               <div className={(playerMove === 0) ? "playerName bold" : "playerName"}>Player X</div>
+              {playerXIcon}
             </div>
             <div className="playerInfo">
               <div className={(playerMove === 1) ? "playerScore bold" : "playerScore"}>{this.state.playerOScore}</div>
               <div className={(playerMove === 1) ? "playerName bold" : "playerName"}>Player O</div>
+              {playerOIcon}
             </div>
           </div>
           <div className="controlPanel">
