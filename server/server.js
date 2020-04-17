@@ -39,6 +39,8 @@ io.on('connection', (socket) => {
   console.log(room_to_clients);
   console.log('Client connected %s', socket.id);
 
+  socket.emit('welcome', socket.id);
+
   socket.on('handleMove', function(data) {
     console.log('handleMove:');
     console.log(data);
@@ -54,7 +56,10 @@ io.on('connection', (socket) => {
     room_to_clients[roomName] = [socket.id];
     socket.join(roomName);
 
-    socket.emit('roomCreated', roomName);
+    socket.emit('roomCreated', {
+      clients: room_to_clients[roomName],
+      roomName: roomName,
+    });
   });
 
   socket.on('joinRoom', function(roomName){

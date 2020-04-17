@@ -40,10 +40,12 @@ class Game extends Component {
         playerOScore: 0,
         selectedBotIndex: 0,
 
+        clientID: null,
+
         // Variables for multiplayer
-        myTimeToMove: true,
         roomName: null,
         readyToPlay: false,
+        clients: [],
 
         startButtonClicked: false,
     }
@@ -80,29 +82,36 @@ class Game extends Component {
       });
     }
 
+    this.props.socket.on('welcome', function(clientID) {
+      this.setState({
+        clientID: clientID,
+      });
+    }.bind(this));
+  
     // For replay
     document.addEventListener("keydown", this._handleKeyDown);
   
     this.props.socket.on('declareMove', function(msg){
       console.log('client declareMove: ' + msg);
       console.log(this);
-      this.handleClick(msg['index']);
+      this.handleClick(msg['index'], false);
     }.bind(this));
 
-    this.props.socket.on('roomCreated', function(roomName) {
-      console.log('ROOM CREATED %s', roomName);
-      window.history.pushState('page2', 'Title', '/' + roomName);
+    this.props.socket.on('roomCreated', function(data) {
+      window.history.pushState('room', 'Room ' + data['roomName'], '/' + data['roomName']);
       // reset the scores
       this.setState({
         playerXScore: 0,
         playerOScore: 0,
-        roomName: roomName,
+        roomName: data['roomName'],
+        clients: data['clients'],
       });
+      this.resetGame();
     }.bind(this));
 
     this.props.socket.on('roomDenied', function(roomName) {
       console.log('roomDenied %s', roomName);
-      window.history.pushState('page2', 'Title', '/');
+      window.history.pushState('room', 'Lobby', '/');
       this.setState({
         roomName: null,
         readyToPlay: false,
@@ -116,10 +125,14 @@ class Game extends Component {
         // Two clients are in the room, somehow signal that a game can be started and who's move is it first
         this.setState({
           readyToPlay: true,
+          clients: data['clients'],
+          roomName: data['roomName'],
         });
       } else {
         this.setState({
           readyToPlay: false,
+          clients: data['clients'],
+          roomName: data['roomName'],
         });
       }
     }.bind(this));
@@ -129,7 +142,6 @@ class Game extends Component {
     // Reset the state of the game
     this.setState({
       squares: Array(this.w * this.h).fill(null),
-      myTimeToMove: true,
       stepNumber: 0,
       winner: null,
       highlight: [],
@@ -205,8 +217,17 @@ class Game extends Component {
     });
   }
 
-  handleClick(i) {
+  handleClick(i, playerMoved) {
     if (this.state.winner !== null || (this.state.roomName !== null && !this.state.readyToPlay)) {
+      return;
+    }
+    var playerMove = this.state.moves.length % 2;
+    if (this.state.roomName !== null && this.state.clientID !== this.state.clients[playerMove] && playerMoved) {
+      // It isn't your move
+      console.log(this.state.clientID);
+      console.log('vs');
+      console.log(this.state.clients);
+      console.log(playerMove);
       return;
     }
     if (this.state.squares[i] === null && this.state.roomName !== null) {
@@ -218,8 +239,7 @@ class Game extends Component {
 
     var move = this.playerOnePiece;
     var nextMove = this.playerTwoPiece;
-
-    if (!this.state.myTimeToMove) {
+    if (playerMove === 1) {
       move = this.playerTwoPiece;
       nextMove = this.playerOnePiece;
     }
@@ -231,9 +251,8 @@ class Game extends Component {
       nextMoves = nextMoves.concat([i]);
       this.setState({
         squares: nextSquares,
-        myTimeToMove: !this.state.myTimeToMove,
         stepNumber: this.state.stepNumber + 1,
-        moves: nextMoves
+        moves: nextMoves,
       });
       // console.log("[Game] handleClick " + i);
       if (this.handleWinner(nextSquares, nextMoves)) { return; }
@@ -247,9 +266,8 @@ class Game extends Component {
         nextMoves = nextMoves.concat([botMove]);
         this.setState({
           squares: nextSquares,
-          myTimeToMove: this.state.myTimeToMove,
           stepNumber: this.state.stepNumber + 1,
-          moves: nextMoves
+          moves: nextMoves,
         });
         // console.log("[Game] handleClick " + i);
         if (this.handleWinner(nextSquares, nextMoves)) { return; }
@@ -271,6 +289,12 @@ class Game extends Component {
       }
       dropdownOptions.push(option)
     }
+    var playerMove = this.state.moves.length % 2;
+    if (this.state.roomName === null) {
+      playerMove = -1;
+    }
+    console.log('playermove');
+    console.log(playerMove);
   
     return (
       <div className="gameContainer">
@@ -279,18 +303,18 @@ class Game extends Component {
           squares={this.state.squares}
           highlight={this.state.highlight} // Highlighted squares on a win
           height={this.h} width={this.w}
-          onClick={i => this.handleClick(i)}
+          onClick={i => this.handleClick(i, true)}
         />
         </div>
         <div className="gamePanel">
           <div className="infoPanel">
             <div className="playerInfo">
-              <div className="playerScore">{this.state.playerXScore}</div>
-              <div className="playerName">Player X</div>
+              <div className={(playerMove === 0) ? "playerScore bold" : "playerScore"}>{this.state.playerXScore}</div>
+              <div className={(playerMove === 0) ? "playerName bold" : "playerName"}>Player X</div>
             </div>
             <div className="playerInfo">
-              <div className="playerScore">{this.state.playerOScore}</div>
-              <div className="playerName">Player O</div>
+              <div className={(playerMove === 1) ? "playerScore bold" : "playerScore"}>{this.state.playerOScore}</div>
+              <div className={(playerMove === 1) ? "playerName bold" : "playerName"}>Player O</div>
             </div>
           </div>
           <div className="controlPanel">

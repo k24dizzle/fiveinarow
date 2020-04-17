@@ -29,7 +29,7 @@ class Chat extends Component {
     }
 
     componentWillReceiveProps(nextProps) {
-        if (nextProps.roomName !== this.state.roomName) {
+        if (nextProps.roomName !== this.props.roomName) {
             console.log("[Room Change, Reset Chat] " + nextProps.roomName + " " + this.state.roomName);
             this.setState({
                 chatLog: [],

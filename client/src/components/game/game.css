@@ -168,6 +168,11 @@
   text-align: center;
   margin-top: 3px;
 }
+
 .Dropdown-disabled {
   background-color: whitesmoke !important;
+}
+
+.bold {
+  font-weight: bold;
 }
