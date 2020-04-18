@@ -1,12 +1,16 @@
 import React, { Component } from 'react';
 import SocketContext from '../socket-context.js'
 import './chat.css';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faUser as currentUser } from '@fortawesome/free-solid-svg-icons'
+import { faUser as otherUser } from '@fortawesome/free-regular-svg-icons'
 
 class Chat extends Component {
     constructor(props) {
         super(props);
         this.state = {
             chatLog: [],
+            userLog: [],
         }
     }
 
@@ -21,10 +25,15 @@ class Chat extends Component {
             console.log("Chat recieved");
             var chatLog = this.state.chatLog;
             chatLog.push(value);
-            console.log(chatLog);
+            var userLog = this.state.userLog;
+            userLog.push(false);
+
             this.setState({
                 chatLog: chatLog,
+                userLog: userLog,
             });
+
+            this.scrollDown();
         }.bind(this));
     }
 
@@ -39,32 +48,61 @@ class Chat extends Component {
 
     renderChatLog() {
         return this.state.chatLog.map(function(msg, i) {
+            let icon = ""
+            if (this.state.userLog[i]) {
+              icon = (
+                <div className="playerIcon"><FontAwesomeIcon icon={currentUser} size="xs"/></div>
+              );
+            } else if (this.state.roomName !== null) {
+              icon = (
+                <div className="playerIcon"><FontAwesomeIcon icon={otherUser} size="xs"/></div>
+              );
+            }        
             return (
-                <div className="row" key={i}>
-                  {msg}
+                <div className="chatRow" key={i}>
+                {icon}
+                <div className="msg">{msg}</div>
                 </div>
             );
-        });
+        }.bind(this));
     }
 
+    scrollDown() {
+        // Scroll to the bottom of the chat
+        var div = document.getElementsByClassName("chatBox")[0];
+        div.scrollTop = div.scrollHeight - div.clientHeight;
+    }
     handleKeyDown(e) {
-        if (e.key === 'Enter') {
+        if (e.key === 'Enter' ) {
             var input = document.getElementsByClassName('chatInput')[0];
-            this.props.socket.emit(
-                'chatInput',
-                {
-                    roomName: this.props.roomName,
-                    value: input.value,
-                }
-            )
-            input.value = "";
+            if (input.value.trim() !== "") {
+                this.props.socket.emit(
+                    'chatInput',
+                    {
+                        roomName: this.props.roomName,
+                        value: input.value,
+                    }
+                )
+                var chatLog = this.state.chatLog;
+                chatLog.push(input.value);
+                var userLog = this.state.userLog;
+                userLog.push(true);
+                this.setState({
+                    chatLog: chatLog,
+                    userLog: userLog,
+                }, this.scrollDown);
+                input.value = "";
+            }
         }
     }
 
     render() {
+
       return (
         <div className={(this.props.roomName === null) ? "chat lobby hidden" : "chat room"}>
-            {this.renderChatLog()}
+            <div className="chatBox">
+                {this.renderChatLog()}
+            </div>
             <input className="chatInput" type="text" onKeyDown={this.handleKeyDown.bind(this)}>
             </input>
         </div>

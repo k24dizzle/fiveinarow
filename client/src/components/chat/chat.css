@@ -1,6 +1,7 @@
 .chat {
     background-color: #F5F5F5;
     position: relative;
+    text-align: center;
 }
 
 .room {
@@ -11,14 +12,46 @@
     height: 80%;
 }
 
+.chatBox {
+    width: 95%;
+    height: 388px;
+    background-color: white;
+    right: 0;
+    display: inline-block;
+    overflow-y: scroll;
+    overflow-x: hidden;
+}
+
 .chatInput {
-    width: 93%;
+    width: 90%;
     padding: 3px 5px;
-    position: absolute;
     right:    0;
     bottom:   0;
 }
 
 .hidden {
     visibility: hidden;
+}
+
+.chatRow {
+    padding-left: 4px;
+    padding-right: 4px;
+    text-align: left;
+    display: flex;
+    overflow-wrap: break-word;
+}
+
+.playerIcon, .msg {
+    vertical-align: middle;
+    display: table-cell;
+}
+
+.msg {
+    display: -webkit-flex;
+    display: flex;
+    align-items: center;
+}
+
+.playerIcon {
+    padding-right: 7px !important;
 }

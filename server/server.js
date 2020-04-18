@@ -98,7 +98,7 @@ io.on('connection', (socket) => {
     console.log("chat data ");
     console.log(data);
     if (roomName !== null) {
-      io.to(roomName).emit('chatRecieved', value);
+      socket.broadcast.to(roomName).emit('chatRecieved', value);
     } else {
       socket.emit('chatRecieved', value);
     }
