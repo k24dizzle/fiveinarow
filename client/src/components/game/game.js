@@ -330,7 +330,7 @@ class Game extends Component {
     }
 
     var lastMove = null;
-    if (this.state.moves.length > 0 && this.state.roomName !== null) {
+    if (this.state.moves.length > 0 && this.state.roomName !== null && (this.state.replayIndex === null)) {
       lastMove = this.state.moves[this.state.moves.length - 1];
     }
   
