@@ -64,8 +64,6 @@ class Chat extends Component {
     render() {
       return (
         <div className={(this.props.roomName === null) ? "chat lobby hidden" : "chat room"}>
-            Chat goes here
-            <br></br>
             {this.renderChatLog()}
             <input className="chatInput" type="text" onKeyDown={this.handleKeyDown.bind(this)}>
             </input>

@@ -128,17 +128,22 @@ class Game extends Component {
       if(data['clients'].length >= 2) {
         // Two clients are in the room, somehow signal that a game can be started and who's move is it first
         this.setState({
-          readyToPlay: true,
           clients: data['clients'],
           roomName: data['roomName'],
         });
       } else {
         this.setState({
-          readyToPlay: false,
           clients: data['clients'],
           roomName: data['roomName'],
         });
       }
+    }.bind(this));
+
+    this.props.socket.on('gameStarted', function(roomName) {
+      this.setState({
+        readyToPlay: true,
+      });
+      this.resetGame();
     }.bind(this));
   }
 
@@ -207,6 +212,8 @@ class Game extends Component {
           winner: win['player'],
           highlight: win['squares'],
           replayIndex: nextMoves.length - 1,
+
+          readyToPlay: false,
         });
         return true;
       } else {
@@ -228,10 +235,6 @@ class Game extends Component {
     var playerMove = this.state.moves.length % 2;
     if (this.state.roomName !== null && this.state.clientID !== this.state.clients[playerMove] && playerMoved) {
       // It isn't your move
-      console.log(this.state.clientID);
-      console.log('vs');
-      console.log(this.state.clients);
-      console.log(playerMove);
       return;
     }
     if (this.state.squares[i] === null && this.state.roomName !== null) {
@@ -280,7 +283,13 @@ class Game extends Component {
   }
 
   startGame() {
-    console.log("start game " + this.state.readyToPlay);
+    if (this.state.clients.length >= 2) {
+      this.setState({
+        readyToPlay: true,
+      });
+      this.resetGame();
+      this.props.socket.emit('startGame', this.state.roomName);
+    }
   }
 
   render() {
@@ -350,6 +359,11 @@ class Game extends Component {
             </div>
           </div>
           <div className="controlPanel">
+            <button
+              className={(this.state.roomName !== null && !this.state.readyToPlay) ? "start coolButton" : "start coolButton hidden"}
+              onClick={() => this.startGame()}
+              disabled={this.state.clients.length < 2}> Start Game
+            </button>
             <Chat
               roomName={this.state.roomName}
               // handleChatInput={this.handleChatInput}
@@ -362,11 +376,7 @@ class Game extends Component {
               className={(this.state.roomName === null) ? "reset coolButton" : "reset coolButton hidden"}
               onClick={() => this.resetGame()}> Reset Game
             </button>
-            <button
-              className={(this.state.roomName !== null) ? "start coolButton" : "start coolButton hidden"}
-              onClick={() => this.startGame()}
-              disabled={!this.state.readyToPlay}> Start Game
-            </button>
+
             <Dropdown
               className={(this.state.roomName === null) ? "dropdown" : "dropdown hidden"}
               options={dropdownOptions}

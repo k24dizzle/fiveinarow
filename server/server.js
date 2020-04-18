@@ -104,4 +104,9 @@ io.on('connection', (socket) => {
     }
   });
 
+  socket.on('startGame', function(roomName) {
+    if (roomName !== null) {
+      io.to(roomName).emit('gameStarted', roomName);
+    }
+  });
 });
