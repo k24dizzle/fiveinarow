@@ -22,6 +22,7 @@ class Board extends Component {
         value={this.props.squares[i]}
         handleClick={() => this.props.onClick(i)}
         highlight={highlight}
+        highlightMove={this.props.lastMove === i}
         corner={cornerValue}
       />
     )

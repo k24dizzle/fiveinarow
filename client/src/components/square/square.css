@@ -27,6 +27,10 @@
   background-color: #98FB98;
 }
 
+.meow {
+  background-color: rgb(255, 248, 206);
+}
+
 .highlight:hover {
   background-color: rgb(139, 238, 139);
 }

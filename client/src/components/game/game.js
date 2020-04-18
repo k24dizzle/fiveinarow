@@ -320,9 +320,10 @@ class Game extends Component {
       );
     }
 
-  
-    console.log('playermove');
-    console.log(playerMove);
+    var lastMove = null;
+    if (this.state.moves.length > 0 && this.state.roomName !== null) {
+      lastMove = this.state.moves[this.state.moves.length - 1];
+    }
   
     return (
       <div className="gameContainer">
@@ -332,6 +333,7 @@ class Game extends Component {
           highlight={this.state.highlight} // Highlighted squares on a win
           height={this.h} width={this.w}
           onClick={i => this.handleClick(i, true)}
+          lastMove={lastMove}
         />
         </div>
         <div className="gamePanel">

@@ -7,7 +7,7 @@ var easyBot = new AlphabetaBot(
       'blocked': 1000000,
     },
     '4': {
-      'open': 1000, // as good as winning...
+      'open': 10000, // as good as winning...
       'blocked': 1000
     },
     '3': {
@@ -20,7 +20,7 @@ var easyBot = new AlphabetaBot(
     },
     '1': {
       'open': 10,
-      'blocked': 10
+      'blocked': 1
     }
   }
 );
