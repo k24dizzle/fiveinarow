@@ -109,10 +109,15 @@ class Chat extends Component {
     render() {
         console.log("FSDLKJFDLK");
         console.log(this.props.expand);
-
+        let size = "";
+        if (this.props.expand) {
+            size += "larger";
+        } else if (this.props.replay) {
+            size += "replayMode";
+        }
       return (
         <div className={(this.props.roomName === null) ? "chat lobby hidden" : "chat room"}>
-            <div className={(this.props.expand) ? "chatBox" : "chatBox larger"}>
+            <div className={"chatBox " + size}>
                 {this.renderChatLog()}
             </div>
             <input className="chatInput" type="text" onKeyDown={this.handleKeyDown.bind(this)}>

@@ -66,7 +66,7 @@ io.on('connection', (socket) => {
       roomName: roomName,
     });
     io.to(roomName).emit('chatRecieved', {
-      'value': `To start a game, link another player here`,
+      'value': `To invite another player, share this link.`,
       'server': true,
     });
   });
