@@ -366,6 +366,7 @@ class Game extends Component {
             </button>
             <Chat
               roomName={this.state.roomName}
+              expand={!this.state.readyToPlay}
               // handleChatInput={this.handleChatInput}
             />
             <button

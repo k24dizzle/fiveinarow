@@ -12,6 +12,9 @@ app.use(function(req, res, next) {
   res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
   next();
 });
+
+let hostname = "https://fiverow.herokuapp.com";
+
 if (process.env.NODE_ENV === 'production') {
   // Serve any static files
   app.use(express.static(path.join(__dirname, '../client/build')));
@@ -21,6 +24,8 @@ if (process.env.NODE_ENV === 'production') {
     console.log(path.join(__dirname, '../client/build', 'index.html'));
     res.sendFile(path.join(__dirname, '../client/build', 'index.html'));
   });
+} else {
+  hostname = `localhost:3000`
 }
 
 const server = app.listen(PORT, () => console.log(`Listening on ${PORT}`));
@@ -60,6 +65,10 @@ io.on('connection', (socket) => {
       clients: room_to_clients[roomName],
       roomName: roomName,
     });
+    io.to(roomName).emit('chatRecieved', {
+      'value': `To start a game, link another player here`,
+      'server': true,
+    });
   });
 
   socket.on('joinRoom', function(roomName){
@@ -98,7 +107,10 @@ io.on('connection', (socket) => {
     console.log("chat data ");
     console.log(data);
     if (roomName !== null) {
-      socket.broadcast.to(roomName).emit('chatRecieved', value);
+      socket.broadcast.to(roomName).emit('chatRecieved', {
+        'value': value,
+        'server': false,
+      });
     } else {
       socket.emit('chatRecieved', value);
     }
@@ -108,5 +120,9 @@ io.on('connection', (socket) => {
     if (roomName !== null) {
       io.to(roomName).emit('gameStarted', roomName);
     }
+    io.to(roomName).emit('chatRecieved', {
+      'value': `Game started!`,
+      'server': true,
+    });
   });
 });

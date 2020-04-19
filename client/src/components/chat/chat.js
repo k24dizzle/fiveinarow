@@ -21,12 +21,19 @@ class Chat extends Component {
         // 1. Chat Recieved (from other player)
         // 2. Room Created (Player X has created room ****, invite another player to [link] to start a game)
         // 3. Player O (Player O has joined room ****)
-        this.props.socket.on('chatRecieved', function(value) {
+        this.props.socket.on('chatRecieved', function(data) {
+            let value = data['value'];
+            let server = data['server'];
+
             console.log("Chat recieved");
             var chatLog = this.state.chatLog;
             chatLog.push(value);
             var userLog = this.state.userLog;
-            userLog.push(false);
+            if (server) {
+                userLog.push(0);
+            } else {
+                userLog.push(1);
+            }
 
             this.setState({
                 chatLog: chatLog,
@@ -49,19 +56,21 @@ class Chat extends Component {
     renderChatLog() {
         return this.state.chatLog.map(function(msg, i) {
             let icon = ""
-            if (this.state.userLog[i]) {
+            if (this.state.userLog[i] === 2) {
               icon = (
-                <div className="playerIcon"><FontAwesomeIcon icon={currentUser} size="xs"/></div>
+                <div className="chatPlayerIcon"><FontAwesomeIcon icon={currentUser} size="xs"/></div>
+              );
+            } else if (this.state.roomName !== null && this.state.userLog[i] === 1) {
+              icon = (
+                <div className="chatPlayerIcon"><FontAwesomeIcon icon={otherUser} size="xs"/></div>
               );
             } else if (this.state.roomName !== null) {
-              icon = (
-                <div className="playerIcon"><FontAwesomeIcon icon={otherUser} size="xs"/></div>
-              );
-            }        
+                icon = "";
+            }
             return (
                 <div className="chatRow" key={i}>
                 {icon}
-                <div className="msg">{msg}</div>
+                <div className={(this.state.userLog[i] === 0) ? "serverMsg" : "msg"}>{msg}</div>
                 </div>
             );
         }.bind(this));
@@ -72,6 +81,7 @@ class Chat extends Component {
         var div = document.getElementsByClassName("chatBox")[0];
         div.scrollTop = div.scrollHeight - div.clientHeight;
     }
+
     handleKeyDown(e) {
         if (e.key === 'Enter' ) {
             var input = document.getElementsByClassName('chatInput')[0];
@@ -86,7 +96,7 @@ class Chat extends Component {
                 var chatLog = this.state.chatLog;
                 chatLog.push(input.value);
                 var userLog = this.state.userLog;
-                userLog.push(true);
+                userLog.push(2);
                 this.setState({
                     chatLog: chatLog,
                     userLog: userLog,
@@ -97,10 +107,12 @@ class Chat extends Component {
     }
 
     render() {
+        console.log("FSDLKJFDLK");
+        console.log(this.props.expand);
 
       return (
         <div className={(this.props.roomName === null) ? "chat lobby hidden" : "chat room"}>
-            <div className="chatBox">
+            <div className={(this.props.expand) ? "chatBox" : "chatBox larger"}>
                 {this.renderChatLog()}
             </div>
             <input className="chatInput" type="text" onKeyDown={this.handleKeyDown.bind(this)}>

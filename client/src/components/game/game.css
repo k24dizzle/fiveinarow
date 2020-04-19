@@ -108,6 +108,7 @@
 .start {
   background-color: #44b610;
   border-bottom: 1px solid #399c0b;
+  margin-top: 4px;
 }
 
 .start:hover {

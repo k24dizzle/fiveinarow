@@ -14,8 +14,8 @@
 
 .chatBox {
     width: 95%;
-    height: 388px;
-    background-color: white;
+    height: 380px;
+    background-color: #efefef;
     right: 0;
     display: inline-block;
     overflow-y: scroll;
@@ -50,8 +50,23 @@
     display: -webkit-flex;
     display: flex;
     align-items: center;
+    font-size: 14px;
 }
 
-.playerIcon {
+.serverMsg {
+    display: -webkit-flex;
+    display: flex;
+    align-items: center;
+    font-size: 12px;
+    font-family: Consolas, monaco, monospace;
+}
+
+.chatPlayerIcon {
     padding-right: 7px !important;
+    vertical-align: text-top;
+    line-height: 20px;
+}
+
+.larger {
+    height: 430px;
 }
