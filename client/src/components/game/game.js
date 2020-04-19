@@ -351,7 +351,8 @@ class Game extends Component {
             </button>
             <Chat
               roomName={this.state.roomName}
-              expand={!this.state.readyToPlay}
+              expand={this.state.readyToPlay}
+              replay={this.state.winner !== null}
             />
             <button
               className={(this.state.roomName === null) ? "create coolButton" : "create coolButton hidden"}

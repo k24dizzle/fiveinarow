@@ -5,7 +5,7 @@
 }
 
 .room {
-    height: 89%;
+    height: 440px;
 }
 
 .lobby {
@@ -14,12 +14,22 @@
 
 .chatBox {
     width: 95%;
-    height: 380px;
+    height: 400px;
     background-color: #efefef;
     right: 0;
     display: inline-block;
     overflow-y: scroll;
     overflow-x: hidden;
+    padding-top: 5px;
+    border-radius: 3px;
+    border-color: #c5c4c4;
+    border-style: solid;
+    margin: 2px;
+    border-width: 1px;
+}
+
+.replayMode {
+    height: 84%;
 }
 
 .chatInput {
@@ -34,8 +44,8 @@
 }
 
 .chatRow {
-    padding-left: 4px;
-    padding-right: 4px;
+    padding-left: 5px;
+    padding-right: 5px;
     text-align: left;
     display: flex;
     overflow-wrap: break-word;
@@ -57,8 +67,10 @@
     display: -webkit-flex;
     display: flex;
     align-items: center;
-    font-size: 12px;
+    font-size: 11.5px;
     font-family: Consolas, monaco, monospace;
+    margin-top: 4px;
+
 }
 
 .chatPlayerIcon {
@@ -68,5 +80,27 @@
 }
 
 .larger {
-    height: 430px;
+    height: 455px;
 }
+
+@media screen and (max-width: 850px) {
+    .room {
+        height: 300px;
+    }
+
+    .chatBox {
+        height: 265px;
+    }
+
+    .larger {
+        height: 334px !important;
+    }
+
+    .replayMode {
+        height: 235px;
+    }
+
+    .controlPanel {
+        height: 83%;
+    }
+  }
