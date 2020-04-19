@@ -7,9 +7,7 @@ import './game.css';
 import SocketContext from '../socket-context.js'
 import Dropdown from 'react-dropdown';
 import 'react-dropdown/style.css';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faUser as currentUser } from '@fortawesome/free-solid-svg-icons'
-import { faUser as otherUser } from '@fortawesome/free-regular-svg-icons'
+import InfoPanel from '../infoPanel/infoPanel.js';
 
 
 class Game extends Component {
@@ -50,8 +48,6 @@ class Game extends Component {
         roomName: null,
         readyToPlay: false,
         clients: [],
-
-        startButtonClicked: false,
     }
 
     this.playerOnePiece = "X";
@@ -309,24 +305,16 @@ class Game extends Component {
 
     var playerXIcon = "";
     if (this.state.roomName !== null && this.state.clients[0] === this.state.clientID) {
-      playerXIcon = (
-        <div className="playerIcon"><FontAwesomeIcon icon={currentUser} /></div>
-      );
+      playerXIcon = "currentPlayer";
     } else if (this.state.roomName !== null) {
-      playerXIcon = (
-        <div className="playerIcon"><FontAwesomeIcon icon={otherUser} /></div>
-      );
+      playerXIcon = "otherPlayer";
     }
 
     var playerOIcon = "";
     if (this.state.roomName !== null && this.state.clients[1] === this.state.clientID) {
-      playerOIcon = (
-        <div className="playerIcon"><FontAwesomeIcon icon={currentUser} /></div>
-      );
+      playerOIcon = "currentPlayer";
     } else if (this.state.roomName !== null && this.state.clients.length > 1) {
-      playerOIcon = (
-        <div className="playerIcon"><FontAwesomeIcon icon={otherUser} /></div>
-      );
+      playerOIcon = "otherPlayer";
     }
 
     var lastMove = null;
@@ -345,19 +333,16 @@ class Game extends Component {
           lastMove={lastMove}
         />
         </div>
+
         <div className="gamePanel">
-          <div className="infoPanel">
-            <div className="playerInfo">
-              <div className={(playerMove === 0 && this.state.readyToPlay) ? "playerScore bold" : "playerScore"}>{this.state.playerXScore}</div>
-              <div className={(playerMove === 0 && this.state.readyToPlay) ? "playerName bold" : "playerName"}>Player X</div>
-              {playerXIcon}
-            </div>
-            <div className="playerInfo">
-              <div className={(playerMove === 1 && this.state.readyToPlay) ? "playerScore bold" : "playerScore"}>{this.state.playerOScore}</div>
-              <div className={(playerMove === 1 && this.state.readyToPlay) ? "playerName bold" : "playerName"}>Player O</div>
-              {playerOIcon}
-            </div>
-          </div>
+          <InfoPanel
+            boldPlayerX={(playerMove === 0 && this.state.readyToPlay)}
+            boldPlayerO={(playerMove === 1 && this.state.readyToPlay)}
+            playerXScore={this.state.playerXScore}
+            playerOScore={this.state.playerOScore}
+            playerXIcon={playerXIcon}
+            playerOIcon={playerOIcon}
+          />
           <div className="controlPanel">
             <button
               className={(this.state.roomName !== null && !this.state.readyToPlay) ? "start coolButton" : "start coolButton hidden"}
@@ -367,7 +352,6 @@ class Game extends Component {
             <Chat
               roomName={this.state.roomName}
               expand={!this.state.readyToPlay}
-              // handleChatInput={this.handleChatInput}
             />
             <button
               className={(this.state.roomName === null) ? "create coolButton" : "create coolButton hidden"}

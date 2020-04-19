@@ -1,0 +1,40 @@
+.infoPanel {
+    background-color: #F5F5F5;
+    height: 60px;
+    border-radius: 3px;
+    margin-bottom: 5px;
+    box-shadow: 0 2px 2px 0 rgba(0,0,0,0.14), 0 3px 1px -2px rgba(0,0,0,0.2), 0 1px 5px 0 rgba(0,0,0,0.12);
+  }
+
+  .bold {
+    font-weight: bold;
+  }
+
+  .playerInfo {
+    display: flex;
+    height: 50%;
+  }
+  
+  .playerScore, .playerName, .playerIcon {
+    vertical-align: middle;
+    display: table-cell;
+    line-height: 30px;
+  }
+  
+  .playerScore {
+    width: 40px;
+    text-align: center;
+    border-right: 1px solid rgb(186, 186, 186);
+    font-size: 18px;
+  }
+  
+  .playerName {
+    padding-left: 10px;
+    width: 120px;
+    text-align: left;
+  }
+  
+  .playerIcon {
+    text-align: right;
+    padding-right: 10px;
+  }
