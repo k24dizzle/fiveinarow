@@ -1,0 +1,106 @@
+.chat {
+    background-color: #F5F5F5;
+    position: relative;
+    text-align: center;
+}
+
+.room {
+    height: 440px;
+}
+
+.lobby {
+    height: 80%;
+}
+
+.chatBox {
+    width: 95%;
+    height: 400px;
+    background-color: #efefef;
+    right: 0;
+    display: inline-block;
+    overflow-y: scroll;
+    overflow-x: hidden;
+    padding-top: 5px;
+    border-radius: 3px;
+    border-color: #c5c4c4;
+    border-style: solid;
+    margin: 2px;
+    border-width: 1px;
+}
+
+.replayMode {
+    height: 84%;
+}
+
+.chatInput {
+    width: 90%;
+    padding: 3px 5px;
+    right:    0;
+    bottom:   0;
+}
+
+.hidden {
+    visibility: hidden;
+}
+
+.chatRow {
+    padding-left: 5px;
+    padding-right: 5px;
+    text-align: left;
+    display: flex;
+    overflow-wrap: break-word;
+}
+
+.playerIcon, .msg {
+    vertical-align: middle;
+    display: table-cell;
+}
+
+.msg {
+    display: -webkit-flex;
+    display: flex;
+    align-items: center;
+    font-size: 14px;
+}
+
+.serverMsg {
+    display: -webkit-flex;
+    display: flex;
+    align-items: center;
+    font-size: 11.5px;
+    font-family: Consolas, monaco, monospace;
+    margin-top: 4px;
+
+}
+
+.chatPlayerIcon {
+    padding-right: 7px !important;
+    vertical-align: text-top;
+    line-height: 20px;
+}
+
+.larger {
+    height: 455px;
+}
+
+@media screen and (max-width: 850px) {
+    .room {
+        height: 300px;
+    }
+
+    .chatBox {
+        height: 265px;
+    }
+
+    .larger {
+        height: 334px !important;
+    }
+
+    .replayMode {
+        height: 235px;
+    }
+
+    .controlPanel {
+        height: 83%;
+    }
+  }

@@ -1,7 +1,7 @@
-Move history, a list of the previous moves?
 Statistics
 Framework for competing bots against each other
-Multiplayer rooms
 Share games (replay games) with a link?
-Allow for local multiplayer or bot
-Change X's and O's to white and black pieces (also change favicon)
+
+- Handle people leaving rooms (room management)
+- Handle chat logic (say if someone created room, joined a room, who won game, offer to switch spots?)
+- Move panels into own components

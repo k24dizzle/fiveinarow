@@ -1,63 +1,157 @@
 import React, { Component } from 'react';
 import Board from '../board/board.js';
-import PrototypeBot from '../../bots/prototype.js';
+import Chat from '../chat/chat.js';
+import { easyBot, mediumBot, hardBot } from '../../bots/bots.js';
 import { checkWin } from '../../utils/gameLogic.js';
 import './game.css';
 import SocketContext from '../socket-context.js'
+import Dropdown from 'react-dropdown';
+import 'react-dropdown/style.css';
+import InfoPanel from '../infoPanel/infoPanel.js';
+
 
 class Game extends Component {
   constructor(props) {
     super(props);
+    this.onDropdownSelect = this.onDropdownSelect.bind(this);
     this.w = parseInt(this.props.width);
     this.h = parseInt(this.props.height);
-    this.totalArea = this.w * this.h;
     this.threshold = 5;
-    this.bot = new PrototypeBot();
+    this.bots = [
+      {
+        label: 'Easy',
+        bot: easyBot,
+      },
+      {
+        label: 'Medium',
+        bot: mediumBot,
+      },
+      {
+        label: 'Hard',
+        bot: hardBot,
+      },
+    ];
     this.state = {
-        squares: Array(this.totalArea).fill(null),
-        xIsNext: true,
+        squares: Array(this.w * this.h).fill(null),
         stepNumber: 0,
         winner: null,
         highlight: [],
         moves: [],
         replayIndex: null,
-        playerX: false,
-        playerO: false,
         playerXScore: 0,
         playerOScore: 0,
+        selectedBotIndex: 0,
+
+        clientID: null,
+
+        // Variables for multiplayer
+        roomName: null,
+        readyToPlay: false,
+        clients: [],
     }
 
     this.playerOnePiece = "X";
     this.playerTwoPiece = "O";
   }
 
+  _handleKeyDown = (event) => {
+    if (this.state.winner !== null) {
+      switch(event.keyCode) {
+          case 37: // left arrow
+            this.goBack();
+            break;
+          case 39: // right arrow
+            this.goForward();
+            break;
+          default:
+              break;
+      }
+    }
+  }
+
   componentDidMount() {
-    console.log("ALIBABA: ");
-    console.log(window.location.href);
+    var roomName = window.location.pathname.substring(1);
+    if (roomName !== "") {
+      this.props.socket.emit('joinRoom', roomName);
+      // An attempt was made to join a room
+      this.setState({
+        room: true,
+        playerXScore: 0,
+        playerOScore: 0,
+        roomName: roomName,
+      });
+    }
+
+    this.props.socket.on('welcome', function(clientID) {
+      this.setState({
+        clientID: clientID,
+      });
+    }.bind(this));
+  
+    // For replay
+    document.addEventListener("keydown", this._handleKeyDown);
+  
     this.props.socket.on('declareMove', function(msg){
       console.log('client declareMove: ' + msg);
       console.log(this);
-      this.handleClick(msg['index'], msg['humanMove']);
+      this.handleClick(msg['index'], false);
     }.bind(this));
 
-    this.props.socket.on('roomCreated', function(roomName) {
-      console.log('ROOM CREATED %s', roomName);
-      window.history.pushState('page2', 'Title', '/'+roomName);
-    });
+    this.props.socket.on('roomCreated', function(data) {
+      window.history.pushState('room', 'Room ' + data['roomName'], '/' + data['roomName']);
+      // reset the scores
+      this.setState({
+        playerXScore: 0,
+        playerOScore: 0,
+        roomName: data['roomName'],
+        clients: data['clients'],
+      });
+      this.resetGame();
+    }.bind(this));
+
+    this.props.socket.on('roomDenied', function(roomName) {
+      console.log('roomDenied %s', roomName);
+      window.history.pushState('room', 'Lobby', '/');
+      this.setState({
+        roomName: null,
+        readyToPlay: false,
+      });
+    }.bind(this));
+
+    this.props.socket.on('roomUpdated', function(data) {
+      console.log("[Client] Someone joined this room");
+      console.log(data['clients']);
+      if(data['clients'].length >= 2) {
+        // Two clients are in the room, somehow signal that a game can be started and who's move is it first
+        this.setState({
+          clients: data['clients'],
+          roomName: data['roomName'],
+        });
+      } else {
+        this.setState({
+          clients: data['clients'],
+          roomName: data['roomName'],
+        });
+      }
+    }.bind(this));
+
+    this.props.socket.on('gameStarted', function(roomName) {
+      this.setState({
+        readyToPlay: true,
+      });
+      this.resetGame();
+    }.bind(this));
   }
 
   resetGame() {
     // Reset the state of the game
     this.setState({
-      squares: Array(this.totalArea).fill(null),
-      xIsNext: true,
+      squares: Array(this.w * this.h).fill(null),
       stepNumber: 0,
       winner: null,
       highlight: [],
       moves: [],
       replayIndex: null,
-      playerX: false,
-      playerO: false,
     });
   }
 
@@ -114,6 +208,8 @@ class Game extends Component {
           winner: win['player'],
           highlight: win['squares'],
           replayIndex: nextMoves.length - 1,
+
+          readyToPlay: false,
         });
         return true;
       } else {
@@ -122,19 +218,34 @@ class Game extends Component {
     }
   }
 
-  handleClick(i, humanMove) {
-    if (this.state.winner !== null) {
+  onDropdownSelect(test) {
+    this.setState({
+      selectedBotIndex: test['value'],
+    });
+  }
+
+  handleClick(i, playerMoved) {
+    if (this.state.winner !== null || (this.state.roomName !== null && !this.state.readyToPlay)) {
       return;
     }
-    if (this.state.squares[i] === null) {
+    var playerMove = this.state.moves.length % 2;
+    if (this.state.roomName !== null && this.state.clientID !== this.state.clients[playerMove] && playerMoved) {
+      // It isn't your move
+      return;
+    }
+    if (this.state.squares[i] === null && this.state.roomName !== null) {
       this.props.socket.emit('handleMove', {
         index: i,
-        humanMove: humanMove,
+        roomName: this.state.roomName
       });
     }
-    // Square was clicked!
-    var move = this.state.xIsNext ? this.playerOnePiece : this.playerTwoPiece;
-    var nextMove = this.state.xIsNext ? this.playerTwoPiece : this.playerOnePiece;
+
+    var move = this.playerOnePiece;
+    var nextMove = this.playerTwoPiece;
+    if (playerMove === 1) {
+      move = this.playerTwoPiece;
+      nextMove = this.playerOnePiece;
+    }
 
     const nextSquares = this.state.squares.slice(0);
     let nextMoves = this.state.moves.slice(0);
@@ -143,52 +254,74 @@ class Game extends Component {
       nextMoves = nextMoves.concat([i]);
       this.setState({
         squares: nextSquares,
-        xIsNext: !this.state.xIsNext,
         stepNumber: this.state.stepNumber + 1,
-        moves: nextMoves
+        moves: nextMoves,
       });
       // console.log("[Game] handleClick " + i);
-      if (this.handleWinner(nextSquares, nextMoves)) {
-        return;
-      }
-      // Trigger the bot...
-      if (humanMove) {
-        var botMove = this.bot.evaluate(nextSquares, this.w, this.h, this.totalArea, nextMove);
-        console.log("Bot Move: " + botMove);
+      if (this.handleWinner(nextSquares, nextMoves)) { return; }
 
+      // Trigger the bot...
+      if (this.state.roomName === null) {
+        var botIndex = this.state.selectedBotIndex;
+        var botMove = this.bots[botIndex]['bot'].evaluate(nextSquares, this.w, this.h, nextMove);
+        console.log("Bot Move: " + botMove + " " + botIndex);
         nextSquares[botMove] = nextMove;
         nextMoves = nextMoves.concat([botMove]);
         this.setState({
           squares: nextSquares,
-          xIsNext: this.state.xIsNext,
           stepNumber: this.state.stepNumber + 1,
-          moves: nextMoves
+          moves: nextMoves,
         });
         // console.log("[Game] handleClick " + i);
-        if (this.handleWinner(nextSquares, nextMoves)) {
-          return;
-        }
+        if (this.handleWinner(nextSquares, nextMoves)) { return; }
       }
     }
   }
 
-  selectPlayerX() {
-    console.log(this.state.playerX);
-    this.setState({
-      playerX: !this.state.playerX,
-      playerO: null,
-    });
-  }
-
-  selectPlayerO() {
-    this.setState({
-      playerX: null,
-      playerO: !this.state.playerO,
-    });
+  startGame() {
+    if (this.state.clients.length >= 2) {
+      this.setState({
+        readyToPlay: true,
+      });
+      this.resetGame();
+      this.props.socket.emit('startGame', this.state.roomName);
+    }
   }
 
   render() {
     // TODO: Move Panel out to its own component
+    let dropdownOptions = []
+    for (let i = 0; i < this.bots.length; i++) {
+      let option = {
+        label: this.bots[i]['label'],
+        value: i,
+      }
+      dropdownOptions.push(option)
+    }
+    var playerMove = this.state.moves.length % 2;
+    if (this.state.roomName === null) {
+      playerMove = -1;
+    }
+
+    var playerXIcon = "";
+    if (this.state.roomName !== null && this.state.clients[0] === this.state.clientID) {
+      playerXIcon = "currentPlayer";
+    } else if (this.state.roomName !== null) {
+      playerXIcon = "otherPlayer";
+    }
+
+    var playerOIcon = "";
+    if (this.state.roomName !== null && this.state.clients[1] === this.state.clientID) {
+      playerOIcon = "currentPlayer";
+    } else if (this.state.roomName !== null && this.state.clients.length > 1) {
+      playerOIcon = "otherPlayer";
+    }
+
+    var lastMove = null;
+    if (this.state.moves.length > 0 && this.state.roomName !== null && (this.state.replayIndex === null)) {
+      lastMove = this.state.moves[this.state.moves.length - 1];
+    }
+  
     return (
       <div className="gameContainer">
         <div className="boardContainer">
@@ -197,28 +330,47 @@ class Game extends Component {
           highlight={this.state.highlight} // Highlighted squares on a win
           height={this.h} width={this.w}
           onClick={i => this.handleClick(i, true)}
+          lastMove={lastMove}
         />
         </div>
+
         <div className="gamePanel">
-          <div className="infoPanel">
-            <div className="playerInfo">
-              <div className="playerScore">{this.state.playerXScore}</div>
-              <div className="playerName">Player X</div>
-            </div>
-            <div className="playerInfo">
-              <div className="playerScore">{this.state.playerOScore}</div>
-              <div className="playerName">Player O</div>
-            </div>
-          </div>
+          <InfoPanel
+            boldPlayerX={(playerMove === 0 && this.state.readyToPlay)}
+            boldPlayerO={(playerMove === 1 && this.state.readyToPlay)}
+            playerXScore={this.state.playerXScore}
+            playerOScore={this.state.playerOScore}
+            playerXIcon={playerXIcon}
+            playerOIcon={playerOIcon}
+          />
           <div className="controlPanel">
             <button
-              className="create coolButton"
-              onClick={() => this.createGame()}> Create Game
+              className={(this.state.roomName !== null && !this.state.readyToPlay) ? "start coolButton" : "start coolButton hidden"}
+              onClick={() => this.startGame()}
+              disabled={this.state.clients.length < 2}> Start Game
+            </button>
+            <Chat
+              roomName={this.state.roomName}
+              expand={this.state.readyToPlay}
+              replay={this.state.winner !== null}
+            />
+            <button
+              className={(this.state.roomName === null) ? "create coolButton" : "create coolButton hidden"}
+              onClick={() => this.createGame()}> Create Room
             </button>
             <button
-              className="reset coolButton"
+              className={(this.state.roomName === null) ? "reset coolButton" : "reset coolButton hidden"}
               onClick={() => this.resetGame()}> Reset Game
             </button>
+
+            <Dropdown
+              className={(this.state.roomName === null) ? "dropdown" : "dropdown hidden"}
+              options={dropdownOptions}
+              onChange={this.onDropdownSelect}
+              value={dropdownOptions[this.state.selectedBotIndex]['label']}
+              placeholder="Select an option"
+              disabled={this.state.moves.length > 0}
+            />
             <div className={(this.state.winner !== null) ? "replay" : "replay hidden"}>
               <button
                 className="back moveButton"

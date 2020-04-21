@@ -7,6 +7,14 @@ const socketIO = require('socket.io');
 const PORT = process.env.PORT || 443;
 const app = express()
 
+app.use(function(req, res, next) {
+  res.header("Access-Control-Allow-Origin", "fiverow.herokuapp.com"); // update to match the domain you will make the request from
+  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+  next();
+});
+
+let hostname = "https://fiverow.herokuapp.com";
+
 if (process.env.NODE_ENV === 'production') {
   // Serve any static files
   app.use(express.static(path.join(__dirname, '../client/build')));
@@ -16,6 +24,8 @@ if (process.env.NODE_ENV === 'production') {
     console.log(path.join(__dirname, '../client/build', 'index.html'));
     res.sendFile(path.join(__dirname, '../client/build', 'index.html'));
   });
+} else {
+  hostname = `localhost:3000`
 }
 
 const server = app.listen(PORT, () => console.log(`Listening on ${PORT}`));
@@ -33,24 +43,86 @@ io.on('connection', (socket) => {
   console.log('room_to_clients');
   console.log(room_to_clients);
   console.log('Client connected %s', socket.id);
+
+  socket.emit('welcome', socket.id);
+
   socket.on('handleMove', function(data) {
     console.log('handleMove:');
     console.log(data);
-    io.emit('declareMove', data);
+    io.to(data['roomName']).emit('declareMove', data);
   });
   socket.on('disconnect', () => console.log('Client disconnected'));
 
   socket.on('createGame', function(){
-    console.log("[%s] wants to create a room", socket.id);
+    console.log("[createGame] %s wants to create a room", socket.id);
   
     var roomName = generateRoom();
     client_to_room[socket.id] = roomName;
     room_to_clients[roomName] = [socket.id];
     socket.join(roomName);
 
-    socket.emit('roomCreated', roomName);
+    socket.emit('roomCreated', {
+      clients: room_to_clients[roomName],
+      roomName: roomName,
+    });
+    io.to(roomName).emit('chatRecieved', {
+      'value': `To invite another player, share this link.`,
+      'server': true,
+    });
   });
 
-});
+  socket.on('joinRoom', function(roomName){
+    console.log("[joinRoom] %s wants to join %s", socket.id, roomName);
+    // When a player joins a room
+    if (roomName in room_to_clients) {
+      var room = room_to_clients[roomName];
+      if (room.length < 2 && !room.includes(socket.id)) {
+        socket.join(roomName);
+        room_to_clients[roomName].push(socket.id);
+        client_to_room[socket.id] = roomName;
+      
+        io.to(roomName).emit('roomUpdated', {
+          clients: room_to_clients[roomName],
+          roomName: roomName,
+        });
+      } else if (room.includes(socket.id)) {
+        socket.join(roomName);
 
-setInterval(() => io.emit('time', new Date().toTimeString()), 1000);
+        io.to(roomName).emit('roomUpdated', {
+          clients: room_to_clients[roomName],
+          roomName: roomName,
+        });
+      } else {
+        socket.emit('roomDenied', roomName);
+      }
+    } else {
+      console.log("%s tried to join non-room %s", socket.id, roomName);
+      socket.emit('roomDenied', roomName);
+    }
+  });
+
+  socket.on('chatInput', function(data) {
+    var roomName = data['roomName'];
+    var value = data['value'];
+    console.log("chat data ");
+    console.log(data);
+    if (roomName !== null) {
+      socket.broadcast.to(roomName).emit('chatRecieved', {
+        'value': value,
+        'server': false,
+      });
+    } else {
+      socket.emit('chatRecieved', value);
+    }
+  });
+
+  socket.on('startGame', function(roomName) {
+    if (roomName !== null) {
+      io.to(roomName).emit('gameStarted', roomName);
+    }
+    io.to(roomName).emit('chatRecieved', {
+      'value': `Game started!`,
+      'server': true,
+    });
+  });
+});

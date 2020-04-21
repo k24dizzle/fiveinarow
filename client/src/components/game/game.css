@@ -7,50 +7,19 @@
   justify-content: center;
 }
 
-.playerInfo {
-  display: flex;
-  height: 50%;
-}
-
-.playerScore, .playerName {
-  vertical-align: middle;
-  display: table-cell;
-  line-height: 30px;
-}
-
-.playerScore {
-  width: 40px;
-  text-align: center;
-  border-right: 1px solid rgb(186, 186, 186);
-  font-size: 18px;
-}
-
-.playerName {
-  padding-left: 10px;
-  width: 160px;
-  text-align: left;
-}
-
 .gamePanel {
   width: 200px;
   padding: 15px 5px;
 }
 
-.infoPanel {
-  background-color: #F5F5F5;
-  height: 60px;
-  border-radius: 3px;
-  margin-bottom: 5px;
-  box-shadow: 0 2px 2px 0 rgba(0,0,0,0.14), 0 3px 1px -2px rgba(0,0,0,0.2), 0 1px 5px 0 rgba(0,0,0,0.12);
-}
-
 .controlPanel {
-  background-color: #F5F5F5;
+  background-color: rgb(247, 247, 247);
   height: 87%;
   padding-top: 5px;
   border-radius: 3px;
   text-align: center;
   position: relative;
+  box-shadow: 0 2px 2px 0 rgba(0,0,0,0.14), 0 3px 1px -2px rgba(0,0,0,0.2), 0 1px 5px 0 rgba(0,0,0,0.12);
 }
 
 .coolButton {
@@ -67,6 +36,7 @@
   margin: auto;
   width: 150px;
   text-align: center;
+  margin-bottom: 5px;
 }
 
 .reset {
@@ -86,6 +56,7 @@
 .create {
   background-color: #2a62c9;
   border-bottom: 1px solid #214c9c;
+  margin-top: 4px;
 }
 
 .create:hover {
@@ -95,6 +66,26 @@
 .create:active {
   background-color: #4675cc;  /* 55% saturation of .reset background-color */
   border-bottom: 1px solid 	#4675cc;
+}
+
+.start {
+  background-color: #44b610;
+  border-bottom: 1px solid #399c0b;
+  margin-top: 4px;
+}
+
+.start:hover {
+  background-color: #54b925;
+}
+
+.start:active {
+  background-color: #63c934;  /* 55% saturation of .reset background-color */
+  border-bottom: 1px solid 	#54b925;
+}
+
+.start:disabled {
+  background-color: #afc2a6;  /* 55% saturation of .reset background-color */
+  border-bottom: 1px solid 	#a1b19a;
 }
 
 .moveButton {
@@ -135,10 +126,18 @@
   margin-left: 3px;
 }
 
-.special {
-  visibility: hidden;
+.hidden {
+  display: none;
 }
 
-.hidden {
-  visibility: hidden;
+.dropdown {
+  left: 50%;
+  transform: translateX(-50%);
+  width: 80%;
+  text-align: center;
+  margin-top: 3px;
+}
+
+.Dropdown-disabled {
+  background-color: whitesmoke !important;
 }

@@ -1,35 +1,12 @@
 import { checkWin } from '../utils/gameLogic.js';
 
-class PrototypeBot {
-  constructor() {
-    this.scores = {
-      '5': {
-        'open': 1000000,
-        'blocked': 1000000,
-      },
-      '4': {
-        'open': 100000, // as good as winning...
-        'blocked': 1000
-      },
-      '3': {
-        'open': 1000,
-        'blocked': 100
-      },
-      '2': {
-        'open': 100,
-        'blocked': 10
-      },
-      '1': {
-        'open': 10,
-        'blocked': 1
-      }
-    }
-
-    // Default values, actual correct values are set when we want to evaluate
+class AlphabetaBot {
+  constructor(scores, playerMult) {
+    this.scores = scores;
     this.playerMult = {
       'X': -1,
       'O': 1
-    }
+    };
   }
 
   evaluateBoard(squares, player) {
@@ -120,7 +97,7 @@ class PrototypeBot {
       ));
     }
     for (i = 1; i < this.w; i++) {
-      result += this.exploreDiagonal(i, squares, (index) => ((index + + this.w + 1)));
+      result += this.exploreDiagonal(i, squares, (index) => ((index + this.w + 1)));
     }
     return result;
   }
@@ -201,11 +178,11 @@ class PrototypeBot {
     return score;
   }
 
-  evaluate(square, width, height, totalArea, move) {
+  evaluate(square, width, height, move) {
     // Given the board and player, return the best move based on some stuff
     this.w = width;
     this.h = height;
-    this.totalArea = totalArea;
+    this.totalArea = this.w * this.h;
 
     if (move === "O") {
       this.playerMult["O"] = 1;
@@ -301,4 +278,4 @@ class PrototypeBot {
   }
 }
 
-export default PrototypeBot;
+export default AlphabetaBot;

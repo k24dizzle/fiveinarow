@@ -25,6 +25,7 @@
 .gameContainer {
   padding-bottom: 10px;
   display: inline-block;
+  margin-top: 3%;
 }
 
 @keyframes App-logo-spin {
