@@ -18,6 +18,13 @@ let hostname = "https://fiverow.herokuapp.com";
 if (process.env.NODE_ENV === 'production') {
   // Serve any static files
   app.use(express.static(path.join(__dirname, '../client/build')));
+
+  app.use((req, res, next) => {
+    if (req.header('x-forwarded-proto') !== 'https')
+      res.redirect(`https://${req.header('host')}${req.url}`)
+    else
+      next()
+  });
       
   // Handle React routing, return all requests to React app
   app.get('*', function(req, res) {
@@ -85,6 +92,10 @@ io.on('connection', (socket) => {
           clients: room_to_clients[roomName],
           roomName: roomName,
         });
+        io.to(roomName).emit('chatRecieved', {
+          'value': `To invite another player, share this link.`,
+          'server': true,
+        });
 
       } else if (room.includes(socket.id)) {
         socket.join(roomName);
@@ -111,7 +122,7 @@ io.on('connection', (socket) => {
       socket.broadcast.to(roomName).emit('chatRecieved', {
         'value': value,
         'server': false,
-      });
+    });
     } else {
       socket.emit('chatRecieved', value);
     }
