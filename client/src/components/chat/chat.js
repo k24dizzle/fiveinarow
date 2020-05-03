@@ -14,6 +14,10 @@ class Chat extends Component {
         }
     }
 
+    componentDidUpdate() {
+        this.scrollDown();
+    }
+
     componentDidMount() {
         // TODO: Move this out to game.js
         // have game.js handle all the possible chat updates, it is up to game.js to update the chat log

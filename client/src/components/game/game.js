@@ -52,6 +52,7 @@ class Game extends Component {
 
     this.playerOnePiece = "X";
     this.playerTwoPiece = "O";
+
   }
 
   _handleKeyDown = (event) => {
@@ -70,6 +71,14 @@ class Game extends Component {
   }
 
   componentDidMount() {
+    window.addEventListener('popstate', (event) => {
+      this.setState({
+        roomName: null,
+        readyToPlay: false,
+      });
+    });
+
+  
     var roomName = window.location.pathname.substring(1);
     if (roomName !== "") {
       this.props.socket.emit('joinRoom', roomName);
