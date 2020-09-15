@@ -85,6 +85,7 @@ io.on('connection', (socket) => {
           clients: room_to_clients[roomName],
           roomName: roomName,
         });
+
       } else if (room.includes(socket.id)) {
         socket.join(roomName);
 

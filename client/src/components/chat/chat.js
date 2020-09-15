@@ -55,7 +55,7 @@ class Chat extends Component {
 
     renderChatLog() {
         return this.state.chatLog.map(function(msg, i) {
-            let icon = ""
+            let icon = "";
             if (this.state.userLog[i] === 2) {
               icon = (
                 <div className="chatPlayerIcon"><FontAwesomeIcon icon={currentUser} size="xs"/></div>
@@ -67,10 +67,21 @@ class Chat extends Component {
             } else if (this.state.roomName !== null) {
                 icon = "";
             }
+
+            let msgHtml = "";
+            if (this.state.userLog[i] === 0) {
+                msgHtml = (
+                    <code className="serverMsg">{msg}</code>  
+                );
+            } else {
+                msgHtml = (
+                    <div className="msg">{msg}</div>  
+                );
+            }
             return (
                 <div className="chatRow" key={i}>
                 {icon}
-                <div className={(this.state.userLog[i] === 0) ? "serverMsg" : "msg"}>{msg}</div>
+                {msgHtml}
                 </div>
             );
         }.bind(this));

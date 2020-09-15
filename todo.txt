@@ -2,6 +2,7 @@ Statistics
 Framework for competing bots against each other
 Share games (replay games) with a link?
 
-- Handle people leaving rooms (room management)
+- Handle people leaving rooms (room management) (logging when people join and leave the room)
 - Handle chat logic (say if someone created room, joined a room, who won game, offer to switch spots?)
 - Move panels into own components
+- Add Time control (5 minute game)
