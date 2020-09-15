@@ -94,6 +94,10 @@
   outline: none;
   padding: 3px 10px;
   border-radius: 3px;
+  border-width: 2px;
+  border-color: white;
+  margin-right: 1px;
+  margin-left: 1px;
 }
 
 .playerButton {
@@ -106,8 +110,6 @@
 }
 
 .replay {
-  margin-left: auto;
-  padding-right: 15px; /* same as the padding for the board */
   position: absolute;
   bottom: 5px;
   width: 100%;

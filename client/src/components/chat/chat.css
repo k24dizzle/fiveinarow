@@ -59,8 +59,8 @@
 .msg {
     display: -webkit-flex;
     display: flex;
-    align-items: center;
     font-size: 14px;
+    padding-top: 2px;
 }
 
 .serverMsg {
@@ -71,6 +71,10 @@
     font-family: Consolas, monaco, monospace;
     margin-top: 4px;
 
+    /* Copied from github's code markdown */
+    padding: .2em .4em;
+    background-color: rgba(24, 127, 230, 0.08);
+    border-radius: 3px;
 }
 
 .chatPlayerIcon {
